@@ -422,7 +422,7 @@ GameObject:
   - component: {fileID: 965672781}
   m_Layer: 8
   m_Name: Platform
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -650,10 +650,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpd: 500
-  jumpForce: 20
+  jumpForce: 15
   bounceForce: 20
   groundChecker: {fileID: 764898720}
   wallChecker: {fileID: 1822671094}
+  isGrounded: 1
+  canJump: 1
+  v: 0
+  h: 0
 --- !u!1 &1565697227
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +758,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1565697227}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 3.64, y: 0.63, z: 0}
+  m_LocalPosition: {x: 8.78, y: 1.49, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

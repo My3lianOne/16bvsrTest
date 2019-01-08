@@ -30,13 +30,49 @@ public class PlayerController : MonoBehaviour
 
     float climbDrag = 10;
 
+    [SerializeField]
+    bool isGrounded = true;
+
+    [SerializeField]
+    bool canJump = true;
+
+    [SerializeField]
+    float v;
+    [SerializeField]
+    float h;
+
+
+
+    /*
     public bool IsGrounded
     {
         get { return Physics2D.Linecast(transform.position, groundChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")); }
     }
+    */
 
     public bool IsClimb {
-        get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && !IsGrounded && Input.GetAxisRaw("Horizontal") != 0; }
+        get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && !isGrounded && Input.GetAxisRaw("Horizontal") != 0; }
+    }
+    
+
+    void OnCollisionStay2D(Collision2D coll)
+    {
+        if (coll.transform.tag == "Ground")
+        {
+            rb.drag = 10;
+            isGrounded = true;
+            canJump = true;
+
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D coll)
+    {
+        if (coll.transform.tag == "Ground")
+        {
+            rb.drag = 0;
+            isGrounded = false;
+        }
     }
 
     private void Awake()
@@ -44,48 +80,58 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-
     void Start()
     {
         
     }
 
-
     void Update(){
         direction = new Vector2(Input.GetAxisRaw("Horizontal"),0);
+        v = Input.GetAxis("Jump");
+
     }
     void FixedUpdate()
     {
-        float h = Input.GetAxisRaw("Horizontal");
+        
+
+        if (v >= 1) canJump = false;
+        
+        h = Input.GetAxisRaw("Horizontal");
         Flip(h);
 
-            rb.AddForce( direction * moveSpd * Time.deltaTime, ForceMode2D.Impulse);
+        rb.AddForce(direction * rb.mass * moveSpd);
 
-        if(Mathf.Abs(rb.velocity.x) > moveSpd/100f)
+        if (Mathf.Abs(rb.velocity.x) > moveSpd/100f)
 		{
 			rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * moveSpd/100f, rb.velocity.y);
 		}
 
-        if(Input.GetButtonDown("Jump") && IsGrounded)
+        if (v > 0 && v < 1 && canJump)
         {
-            rb.velocity = new Vector2 (0, jumpForce);
-            //rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            //rb.AddForce(Vector2.up * (jumpForce - 1) * (1 - v), ForceMode2D.Impulse);
+            rb.velocity = new Vector2(0, jumpForce);
         }
 
-        if(Input.GetButtonDown("Jump") && IsClimb)
+        if(Input.GetButton("Jump") && IsClimb)
         {
-            //rb.velocity = new Vector2 (-transform.localScale.x * bounceForce, bounceForce/);
-             rb.AddForce(new Vector2 (-transform.localScale.x, 1) * bounceForce, ForceMode2D.Impulse);
-            Flip(-transform.localScale.x);
+            //rb.velocity = new Vector2 (-transform.localScale.x * bounceForce, bounceForce);
+            rb.AddForce(new Vector2 (-transform.localScale.x, 1) * bounceForce, ForceMode2D.Impulse);
+            Flip(-transform.localScale.x);            
         }
-    
+
+        if (Input.GetButtonUp("Jump"))
+        {
+            canJump = false;
+        }
+
+
         if(IsClimb) {
             rb.drag = climbDrag;
         }
         else {
             rb.drag = normalDrag;
         }
-    
+
     }
 
 
