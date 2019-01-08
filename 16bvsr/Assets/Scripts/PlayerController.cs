@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     float signDirection;
     float normalDrag = 2;
 
-    float climbDrag = 10;
+    float climbDrag = 50;
 
     [SerializeField]
     bool isGrounded = true;
@@ -99,7 +99,14 @@ public class PlayerController : MonoBehaviour
         h = Input.GetAxisRaw("Horizontal");
         Flip(h);
 
-        rb.AddForce(direction * rb.mass * moveSpd);
+        rb.AddForce(direction * moveSpd);
+
+        if (Input.GetButton("Jump") && IsClimb) 
+        {
+            //rb.velocity = new Vector2 (-transform.localScale.x * bounceForce, bounceForce);
+            rb.AddForce(new Vector2(-transform.localScale.x, 0) * bounceForce);
+            Flip(-transform.localScale.x);
+        }
 
         if (Mathf.Abs(rb.velocity.x) > moveSpd/100f)
 		{
@@ -112,12 +119,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(0, jumpForce);
         }
 
-        if(Input.GetButton("Jump") && IsClimb)
-        {
-            //rb.velocity = new Vector2 (-transform.localScale.x * bounceForce, bounceForce);
-            rb.AddForce(new Vector2 (-transform.localScale.x, 1) * bounceForce, ForceMode2D.Impulse);
-            Flip(-transform.localScale.x);            
-        }
+
 
         if (Input.GetButtonUp("Jump"))
         {
