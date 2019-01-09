@@ -1,63 +1,74 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class MoveScript : MonoBehaviour
 {
+    /// <summary>
+    /// Модификатор уменьшения силы прыжка по Y;
+    /// </summary>
     [SerializeField]
-    float moveSpd;
+    [Tooltip("Модификатор уменьшения силы прыжка по Y")]
+    private int modY = 4;
 
     [SerializeField]
-    float jumpForce;
+    [Tooltip("Скорость перемещения")]
+    float moveSpd = 0;
 
-    [SerializeField]
-    float bounceForce;
+    private float jumpForce = 0;
 
-    [SerializeField]
-    GameObject groundChecker;
+    /// <summary>
+    /// "Щуп" стен.
+    /// </summary>
+    [Tooltip("Щуп стен")]
     [SerializeField]
     GameObject wallChecker;
 
-    Rigidbody2D rb;
+    private Rigidbody2D rb;
 
     private Vector2 direction;
 
 
-    float signDirection;
     [SerializeField]
+    [Tooltip("Сопротивление (замедление) при обычном состоянии")]
     float normalDrag = 2;
+
     [SerializeField]
+    [Tooltip("Скорость скольжения по стене (больше - медленнее)")]
     float climbDrag = 50;
 
     [SerializeField]
+    [Tooltip("Обычная сила прыжка")]
     float normalJumpForce = 2;
+
     [SerializeField]
+    [Tooltip("Сила прыжка при скольжении по стене")]
     float climbJumpForce = 50;
 
-
-    [SerializeField]
     bool isGrounded = true;
-
-    [SerializeField]
     bool canJump = true;
 
-    [SerializeField]
     float v;
-    [SerializeField]
     float h;
+
+    
+    [SerializeField]
+    [Tooltip("Бустер гравитации при прыжке")]
+    private float gravityMod;
+
+    [SerializeField]
+    [Tooltip("Обычная гравитация")]
+    private float normalGravity;
 
     public bool IsClimb
     {
         get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && !isGrounded && Input.GetAxisRaw("Horizontal") != 0; }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         h = Input.GetAxisRaw("Horizontal");
@@ -90,31 +101,18 @@ public class MoveScript : MonoBehaviour
         {
             Vector2 direction;
             if (IsClimb)
-                direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / 4);
+                direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / modY);
             else
                 direction = new Vector2(0, jumpForce * (1 - v));
             rb.AddForce(direction, ForceMode2D.Impulse);
         }
-
-        /*if (Input.GetButton("Jump") && canJump && IsClimb)
-        {
-            
-            rb.AddForce(new Vector2(jumpForce * -transform.localScale.x, 0), ForceMode2D.Impulse);
-            rb.drag = 0;
-            canJump = false;
-        }
-        */
-
-
-
     }
 
     void OnCollisionStay2D(Collision2D coll)
     {
         if (coll.transform.tag == "Ground")
         {
-            rb.drag = 10;
-            rb.gravityScale = 9;
+            rb.gravityScale = normalGravity;
             isGrounded = true;
             canJump = true;
         }
@@ -123,17 +121,19 @@ public class MoveScript : MonoBehaviour
     void OnCollisionExit2D(Collision2D coll)
     {
         if (coll.transform.tag == "Ground")
-        {
-            rb.drag = 0;
-            rb.gravityScale = rb.gravityScale + 5f;
+        {            
+            rb.gravityScale = rb.gravityScale + gravityMod;
             isGrounded = false;
         }
     }
 
+    /// <summary>
+    /// Переворачивает персонажа в зависимости от направления движения
+    /// </summary>
+    /// <param name="h">Направление</param>
     private void Flip(float h)
     {
         if (h != 0)
             transform.localScale = new Vector3(h, transform.localScale.y, transform.localScale.z);
     }
-
 }
