@@ -60,7 +60,5 @@ public class LevelSwitcherWithMove : MonoBehaviour
     public void DisableFader()
     {
         fader.SetActive(false);
-    }
-    
-    
+    }        
 }

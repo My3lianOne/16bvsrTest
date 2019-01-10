@@ -29,13 +29,6 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Щуп пола")]
     [SerializeField]
     GameObject groundChecker;
-
-    /// <summary>
-    /// Проверка на застревание внутри коллайдера.
-    /// </summary>
-    [Tooltip("Щуп пола")]
-    [SerializeField]
-    GameObject absChecker;
     
     private Rigidbody2D rb;
 
@@ -88,11 +81,6 @@ public class MoveScript : MonoBehaviour
         get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && IsGrounded != true && Input.GetAxisRaw("Horizontal") != 0; }
     }
     
-    public bool IsAbs
-    {
-        get { return Physics2D.Raycast(groundChecker.transform.position, transform.position, 1 << LayerMask.NameToLayer("Ground")); }
-    }
-
     void Start()
     {
 
@@ -151,22 +139,6 @@ public class MoveScript : MonoBehaviour
             rb.AddForce(direction, ForceMode2D.Impulse);
         }
 
-    }
-
-    void OnCollisionStay2D(Collision2D coll)
-    {
-        if (coll.transform.tag == "Ground")
-        {
-            
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D coll)
-    {
-        if (coll.transform.tag == "Ground")
-        {            
-            
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
