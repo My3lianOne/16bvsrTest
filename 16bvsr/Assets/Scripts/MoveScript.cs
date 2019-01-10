@@ -56,6 +56,8 @@ public class MoveScript : MonoBehaviour
     bool isGrounded = true;
     bool canJump = true;
 
+    private bool jump;
+
     float v;
     float h;
 
@@ -94,6 +96,8 @@ public class MoveScript : MonoBehaviour
         h = Input.GetAxisRaw("Horizontal");
         v = Input.GetAxis("Jump");
 
+        jump = Input.GetButton("Jump");
+        
         if(Input.GetButtonUp("Jump"))
         {
             canJump = false;
@@ -104,37 +108,42 @@ public class MoveScript : MonoBehaviour
             jumpForce = climbJumpForce;
             rb.drag = climbDrag;
             canJump = true;
+            rb.gravityScale = normalGravity;
+        }
+        else if (IsGrounded)
+        {
+            rb.gravityScale = normalGravity;
+            canJump = true;
+            rb.drag = normalDrag;
         }
         else
         {
             rb.drag = normalDrag;
-            jumpForce = normalJumpForce;            
-        }
-
-        if (IsGrounded)
-        {
-            rb.gravityScale = normalGravity;
-            canJump = true;
-        }
-        else
-        {
+            jumpForce = normalJumpForce;    
             rb.gravityScale = rb.gravityScale + gravityMod;
         }
+
+        
 
     }
 
     private void FixedUpdate()
     {
-        Flip(h);
-        rb.AddForce(new Vector2(h, 0) * moveSpd);
+
+        if (h != 0)
+        {
+            rb.AddForce(new Vector2(h, 0) * moveSpd);
+            Flip(h);
+        }
+            
 
         Vector2 direction = Vector2.zero;
-        if (Input.GetButtonDown("Jump") && canJump && IsClimb)
+        if (jump && canJump && IsClimb)
         {
             direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / modY);
             rb.AddForce(direction, ForceMode2D.Impulse);
         }
-        else if (Input.GetButton("Jump")&& canJump && IsClimb != true){
+        else if (jump && canJump && isGrounded){
             direction = new Vector2(0, jumpForce * (1 - v));   
             rb.AddForce(direction, ForceMode2D.Impulse);
         }

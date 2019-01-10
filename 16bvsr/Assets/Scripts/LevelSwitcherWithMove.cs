@@ -13,12 +13,15 @@ public class LevelSwitcherWithMove : MonoBehaviour
     private GameObject player;
     
     [SerializeField] private GameObject fader;
-
+    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject worldBound;
     private Animation fAnim;
 
     private bool isSwitching;
     
     private GameObject currLevel;
+    
+    
     
     // Start is called before the first frame update
     void Start()
@@ -36,25 +39,29 @@ public class LevelSwitcherWithMove : MonoBehaviour
             isSwitching = true;
             Invoke("Switch", switchTime);
             
-        }           
+        }   
     }
 
     public void Switch()   
     {
         isSwitching = false;
+        
         if (currLevel == normalLevel)
         {
             player.transform.Translate(new Vector3 (0,-20));
+            worldBound.transform.Translate(new Vector3 (0,-20));
             currLevel = pixelLevel;
             return;
         }
 
         if (currLevel == pixelLevel)
         {
+            worldBound.transform.Translate(new Vector3 (0,20));
             player.transform.Translate(new Vector3 (0,20));
             currLevel = normalLevel;
             return;
         }
+        camera.transform.Translate(player.transform.position);   
     }
     
     public void DisableFader()
