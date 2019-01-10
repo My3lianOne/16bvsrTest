@@ -22,8 +22,24 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Щуп стен")]
     [SerializeField]
     GameObject wallChecker;
+    
+    /// <summary>
+    /// "Щуп" стен.
+    /// </summary>
+    [Tooltip("Щуп пола")]
+    [SerializeField]
+    GameObject groundChecker;
 
+    /// <summary>
+    /// Проверка на застревание внутри коллайдера.
+    /// </summary>
+    [Tooltip("Щуп пола")]
+    [SerializeField]
+    GameObject absChecker;
+    
     private Rigidbody2D rb;
+
+    private Collider2D col;
 
     private Vector2 direction;
 
@@ -59,14 +75,30 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Обычная гравитация")]
     private float normalGravity;
 
+    public bool IsGrounded
+    {
+        get
+        {
+            return Physics2D.Linecast(transform.position, groundChecker.transform.position,
+                1 << LayerMask.NameToLayer("Ground"));
+        }
+    }
     public bool IsClimb
     {
-        get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && !isGrounded && Input.GetAxisRaw("Horizontal") != 0; }
+        get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && IsGrounded != true && Input.GetAxisRaw("Horizontal") != 0; }
+    }
+    
+    public bool IsAbs
+    {
+        get { return Physics2D.Raycast(groundChecker.transform.position, transform.position, 1 << LayerMask.NameToLayer("Ground")); }
     }
 
     void Start()
     {
+
+        Time.timeScale = 0.5f;
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
     }
     
     void Update()
@@ -90,6 +122,17 @@ public class MoveScript : MonoBehaviour
             rb.drag = normalDrag;
             jumpForce = normalJumpForce;            
         }
+
+        if (IsGrounded)
+        {
+            rb.gravityScale = normalGravity;
+            canJump = true;
+        }
+        else
+        {
+            rb.gravityScale = rb.gravityScale + gravityMod;
+        }
+
     }
 
     private void FixedUpdate()
@@ -97,24 +140,24 @@ public class MoveScript : MonoBehaviour
         Flip(h);
         rb.AddForce(new Vector2(h, 0) * moveSpd);
 
-        if (Input.GetButton("Jump") && canJump)
+        Vector2 direction = Vector2.zero;
+        if (Input.GetButtonDown("Jump") && canJump && IsClimb)
         {
-            Vector2 direction;
-            if (IsClimb)
-                direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / modY);
-            else
-                direction = new Vector2(0, jumpForce * (1 - v));
+            direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / modY);
             rb.AddForce(direction, ForceMode2D.Impulse);
         }
+        else if (Input.GetButton("Jump")&& canJump && IsClimb != true){
+            direction = new Vector2(0, jumpForce * (1 - v));   
+            rb.AddForce(direction, ForceMode2D.Impulse);
+        }
+
     }
 
     void OnCollisionStay2D(Collision2D coll)
     {
         if (coll.transform.tag == "Ground")
         {
-            rb.gravityScale = normalGravity;
-            isGrounded = true;
-            canJump = true;
+            
         }
     }
 
@@ -122,8 +165,31 @@ public class MoveScript : MonoBehaviour
     {
         if (coll.transform.tag == "Ground")
         {            
-            rb.gravityScale = rb.gravityScale + gravityMod;
-            isGrounded = false;
+            
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Ground"))
+        {
+            col.enabled = false;
+        }
+    }
+    
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Ground"))
+        {
+            col.enabled = true;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Ground"))
+        {
+            col.enabled = false;
         }
     }
 
