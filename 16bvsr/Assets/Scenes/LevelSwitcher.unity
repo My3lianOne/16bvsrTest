@@ -197,7 +197,7 @@ PrefabInstance:
     - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
         type: 3}
       propertyPath: m_CollisionDetection
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
         type: 3}
@@ -206,7 +206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 760115555, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 411442472, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
       propertyPath: m_PlayAutomatically
@@ -421,7 +421,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 801765673}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.19, y: -0.97, z: 0}
+  m_LocalPosition: {x: -20.6, y: -0.97, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -452,11 +452,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -20.123339, y: 7.107386}
-      - {x: -20.05672, y: -5.1720276}
-      - {x: 24.781351, y: -5.1938066}
-      - {x: 72.2106, y: -5.1163626}
-      - {x: 72.33315, y: 7.512714}
+    - - {x: 611.3062, y: 26.037252}
+      - {x: 1.3716965, y: 27.96126}
+      - {x: 0.6171856, y: -3.9277656}
+      - {x: 604.3004, y: -8.2577715}
 --- !u!1 &984622231
 GameObject:
   m_ObjectHideFlags: 0
@@ -46868,12 +46867,12 @@ PrefabInstance:
     - target: {fileID: 2620071516051142372, guid: 1b0ce5524f398984c8a28969685e5f0c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.1572789
+      value: 1.15
       objectReference: {fileID: 0}
     - target: {fileID: 2620071516051142372, guid: 1b0ce5524f398984c8a28969685e5f0c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0413835
+      value: 2.7
       objectReference: {fileID: 0}
     - target: {fileID: 2620071516051142372, guid: 1b0ce5524f398984c8a28969685e5f0c,
         type: 3}
