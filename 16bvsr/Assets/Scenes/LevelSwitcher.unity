@@ -124,11 +124,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839514, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     - target: {fileID: 6356280287119839494, guid: db048ae3ce777204587d4cd0c2fc4da3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -182,89 +177,6 @@ PrefabInstance:
     - target: {fileID: 6356280287119839494, guid: db048ae3ce777204587d4cd0c2fc4da3,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_Interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_Constraints
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_Mass
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_LinearDrag
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839492, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: m_GravityScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: climbDrag
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: normalDrag
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: normalJumpForce
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: isGrounded
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: normalGravity
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: moveSpd
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: gravityMod
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: climbJumpForce
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
-        type: 3}
-      propertyPath: modY
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 760115555, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 411442472, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
-      propertyPath: m_PlayAutomatically
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6356280285540913448, guid: db048ae3ce777204587d4cd0c2fc4da3,
@@ -785,6 +697,23 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 158085188}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &760115556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760115549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d4cca0b9e9ba0e45bb1cff9a8d606d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolCapacity: 10
+  shootingPlace: {fileID: 1264010813}
+  shootForce: 0
+  projectile: {fileID: 8333903960912589332, guid: 4aa1ea3a6f7afce49b9ef5d9e8ebea07,
+    type: 3}
 --- !u!1 &801765673
 GameObject:
   m_ObjectHideFlags: 0
@@ -1329,6 +1258,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1264010813 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6356280286107381059, guid: db048ae3ce777204587d4cd0c2fc4da3,
+    type: 3}
+  m_PrefabInstance: {fileID: 158085188}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1313592944
 GameObject:
   m_ObjectHideFlags: 0
