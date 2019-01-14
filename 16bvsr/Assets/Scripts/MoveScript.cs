@@ -36,6 +36,9 @@ public class MoveScript : MonoBehaviour
 
     private Vector2 direction;
 
+    [SerializeField]
+    private bool isClimb;
+
 
     [SerializeField]
     [Tooltip("Сопротивление (замедление) при обычном состоянии")]
@@ -53,12 +56,15 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Сила прыжка при скольжении по стене")]
     float climbJumpForce = 50;
 
-    bool isGrounded = true;
-    bool canJump = true;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool canJump;
 
-    private bool jump;
 
-    float v;
+    [SerializeField] private bool jump;
+    [SerializeField]
+    private float jumpInput;
+    [SerializeField]
+    private bool jumpPressed;
     float h;
 
     
@@ -72,21 +78,19 @@ public class MoveScript : MonoBehaviour
 
     public bool IsGrounded
     {
+        get { return isGrounded; }
+    }
+    public bool IsWallNear
+    {
         get
         {
-            return Physics2D.Linecast(transform.position, groundChecker.transform.position,
+            return Physics2D.Linecast(transform.position, wallChecker.transform.position,
                 1 << LayerMask.NameToLayer("Ground"));
         }
-    }
-    public bool IsClimb
-    {
-        get { return Physics2D.Linecast(transform.position, wallChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")) && IsGrounded != true && Input.GetAxisRaw("Horizontal") != 0; }
     }
     
     void Start()
     {
-
-        Time.timeScale = 0.5f;
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
     }
@@ -94,37 +98,66 @@ public class MoveScript : MonoBehaviour
     void Update()
     {
         h = Input.GetAxisRaw("Horizontal");
-        v = Input.GetAxis("Jump");
-
-        jump = Input.GetButton("Jump");
+        jumpPressed = Input.GetButton("Jump");
+        // Получаем ось прыжка
+        jumpInput = Input.GetAxis("Jump");
+        isGrounded = Physics2D.Linecast(transform.position, groundChecker.transform.position,
+            1 << LayerMask.NameToLayer("Ground"));
         
-        if(Input.GetButtonUp("Jump"))
+        // если нажата кнопка прыжка, можно прыгать и ввод по оси не превышает 1
+        if ( jumpPressed && canJump && jumpInput < 1)
+        {
+            jump = true;
+        }
+        else
         {
             canJump = false;
-        }
+            jump = false;
+        }           
 
-        if (IsClimb)
+        if ((isGrounded && jumpInput == 0) || (isClimb && jumpInput == 0) )
+        {
+            canJump = true;
+        }                   
+        
+        if (IsWallNear == true && isGrounded == false)
+        {
+            if (h >= transform.localScale.x && jumpInput == 0)
+            {
+                isClimb = true;
+            }
+            else
+            {
+                isClimb = false;
+            }
+        }
+        else
+        {
+            isClimb = false;
+        }
+        
+        // Если сползаем по стене
+        if (isClimb)
         {
             jumpForce = climbJumpForce;
             rb.drag = climbDrag;
-            canJump = true;
-            rb.gravityScale = normalGravity;
+            rb.gravityScale = 9;
         }
-        else if (IsGrounded)
+        // если находимся на земле
+        else if (isGrounded)
         {
             rb.gravityScale = normalGravity;
-            canJump = true;
             rb.drag = normalDrag;
-        }
+            isClimb = false;
+        }        
+        // если в воздухе
         else
         {
             rb.drag = normalDrag;
             jumpForce = normalJumpForce;    
             rb.gravityScale = rb.gravityScale + gravityMod;
-        }
-
-        
-
+            isClimb = false;
+        }   
     }
 
     private void FixedUpdate()
@@ -132,22 +165,22 @@ public class MoveScript : MonoBehaviour
 
         if (h != 0)
         {
-            rb.AddForce(new Vector2(h, 0) * moveSpd);
+            if(!IsWallNear)
+                rb.AddForce(new Vector2(h, 0) * moveSpd);
             Flip(h);
         }
-            
-
+                            
         Vector2 direction = Vector2.zero;
-        if (jump && canJump && IsClimb)
+        
+        if (Input.GetButtonDown("Jump") && isClimb)
         {
             direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / modY);
             rb.AddForce(direction, ForceMode2D.Impulse);
         }
-        else if (jump && canJump && isGrounded){
-            direction = new Vector2(0, jumpForce * (1 - v));   
-            rb.AddForce(direction, ForceMode2D.Impulse);
+        else if (jump == true){
+            direction = transform.up * jumpForce;   
+            rb.AddForce(direction, ForceMode2D.Force);
         }
-
     }
 
     private void OnTriggerEnter2D(Collider2D other)
