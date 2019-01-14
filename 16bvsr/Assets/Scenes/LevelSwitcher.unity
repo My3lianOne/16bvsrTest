@@ -257,7 +257,7 @@ PrefabInstance:
     - target: {fileID: 6356280287119839495, guid: db048ae3ce777204587d4cd0c2fc4da3,
         type: 3}
       propertyPath: modY
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 760115555, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
       propertyPath: m_Enabled
@@ -266,6 +266,11 @@ PrefabInstance:
     - target: {fileID: 411442472, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
       propertyPath: m_PlayAutomatically
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6356280285540913448, guid: db048ae3ce777204587d4cd0c2fc4da3,
+        type: 3}
+      propertyPath: m_Name
+      value: Eye
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db048ae3ce777204587d4cd0c2fc4da3, type: 3}
