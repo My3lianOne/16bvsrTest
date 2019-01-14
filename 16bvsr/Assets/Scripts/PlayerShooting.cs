@@ -43,7 +43,7 @@ public class PlayerShooting : MonoBehaviour
             if (proj.activeSelf == false)
             {   
                 proj.SetActive(true);  
-                proj.transform.position = shootingPlace.position;
+                proj.transform.position = shootingPlace.positiond;
                 proj.transform.localScale = transform.localScale;
                 
                 
