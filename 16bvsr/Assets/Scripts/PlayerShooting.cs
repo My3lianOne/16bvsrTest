@@ -13,9 +13,14 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private float shootForce; 
 
     [SerializeField] private GameObject projectile;
+
+    private Animator anim;
     // Start is called before the first frame update
     void Awake()
     {
+
+        anim = GetComponent<Animator>();
+        
         for (int i = 0; i < poolCapacity; i++)
         {
             GameObject obj = GameObject.Instantiate(projectile);
@@ -30,32 +35,25 @@ public class PlayerShooting : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire2"))
         {
-            SpawnProjectile();
+            anim.SetTrigger("Shoot");
         }
     }
     
     
 
-    GameObject SpawnProjectile()
+    public GameObject SpawnProjectile()
     {
         foreach (var proj in pool)
         {
             if (proj.activeSelf == false)
             {   
                 proj.SetActive(true);  
-                proj.transform.position = shootingPlace.positiond;
+                proj.transform.position = shootingPlace.position;
                 proj.transform.localScale = transform.localScale;
-                
-                
+                                
                 return proj;
             }
         }
-
         return null;
-    }
-
-
-    
-    
-    
+    }  
 }
