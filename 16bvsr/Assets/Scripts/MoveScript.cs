@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class MoveScript : MonoBehaviour
@@ -101,8 +102,9 @@ public class MoveScript : MonoBehaviour
         jumpPressed = Input.GetButton("Jump");
         // Получаем ось прыжка
         jumpInput = Input.GetAxis("Jump");
-        isGrounded = Physics2D.Linecast(transform.position, groundChecker.transform.position,
-            1 << LayerMask.NameToLayer("Ground"));
+
+        isGrounded = rb.IsTouchingLayers(1 << LayerMask.NameToLayer("Ground"));
+        //Physics2D.Linecast(transform.position, groundChecker.transform.position, 1 << LayerMask.NameToLayer("Ground"));
         
         // если нажата кнопка прыжка, можно прыгать и ввод по оси не превышает 1
         if ( jumpPressed && canJump && jumpInput < 1)
@@ -113,7 +115,7 @@ public class MoveScript : MonoBehaviour
         {
             canJump = false;
             jump = false;
-        }           
+        }
 
         if ((isGrounded && jumpInput == 0) || (isClimb && jumpInput == 0) )
         {
@@ -149,12 +151,13 @@ public class MoveScript : MonoBehaviour
             rb.gravityScale = normalGravity;
             rb.drag = normalDrag;
             isClimb = false;
+            jumpForce = normalJumpForce;
         }        
         // если в воздухе
         else
         {
             rb.drag = normalDrag;
-            jumpForce = normalJumpForce;    
+            jumpForce = normalJumpForce;
             rb.gravityScale = rb.gravityScale + gravityMod;
             isClimb = false;
         }   
@@ -162,7 +165,6 @@ public class MoveScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         if (h != 0)
         {
             if(!IsWallNear)
@@ -196,6 +198,10 @@ public class MoveScript : MonoBehaviour
         if (other.CompareTag("Ground"))
         {
             col.enabled = true;
+        }
+        else if (other.CompareTag("Bound"))
+        {
+            SceneManager.LoadScene("LevelSwitcher");
         }
     }
 
