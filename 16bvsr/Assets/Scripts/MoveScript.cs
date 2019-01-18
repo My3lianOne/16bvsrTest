@@ -66,8 +66,12 @@ public class MoveScript : MonoBehaviour
     private float jumpInput;
     [SerializeField]
     private bool jumpPressed;
+    [SerializeField]
+    private bool isBounce;
     float h;
-
+    [SerializeField]
+    private bool canBounce;
+    
     
     [SerializeField]
     [Tooltip("Бустер гравитации при прыжке")]
@@ -103,28 +107,36 @@ public class MoveScript : MonoBehaviour
         // Получаем ось прыжка
         jumpInput = Input.GetAxis("Jump");
 
-        isGrounded = rb.IsTouchingLayers(1 << LayerMask.NameToLayer("Ground"));
-        //Physics2D.Linecast(transform.position, groundChecker.transform.position, 1 << LayerMask.NameToLayer("Ground"));
+        isGrounded = Physics2D.Linecast(transform.position, groundChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")); 
+        //rb.IsTouchingLayers(1 << LayerMask.NameToLayer("Ground"));
+        
         
         // если нажата кнопка прыжка, можно прыгать и ввод по оси не превышает 1
-        if ( jumpPressed && canJump && jumpInput < 1)
+        if ( jumpPressed && canBounce && jumpInput < 1 )
+        {
+            isBounce = true;
+        }
+        else if ( jumpPressed && canJump && jumpInput < 1 )
         {
             jump = true;
-        }
+        }               
         else
         {
             canJump = false;
             jump = false;
+            canBounce = false;
+            isBounce = false;
         }
 
-        if ((isGrounded && jumpInput == 0) || (isClimb && jumpInput == 0) )
+        if ( isGrounded && jumpInput == 0 )
         {
-            canJump = true;
-        }                   
-        
+            canJump = true;            
+        }
+
+
         if (IsWallNear == true && isGrounded == false)
         {
-            if (h >= transform.localScale.x && jumpInput == 0)
+            if (h != 0 && !jump)
             {
                 isClimb = true;
             }
@@ -136,6 +148,7 @@ public class MoveScript : MonoBehaviour
         else
         {
             isClimb = false;
+            
         }
         
         // Если сползаем по стене
@@ -144,6 +157,7 @@ public class MoveScript : MonoBehaviour
             jumpForce = climbJumpForce;
             rb.drag = climbDrag;
             rb.gravityScale = 9;
+            canBounce = true;
         }
         // если находимся на земле
         else if (isGrounded)
@@ -152,6 +166,7 @@ public class MoveScript : MonoBehaviour
             rb.drag = normalDrag;
             isClimb = false;
             jumpForce = normalJumpForce;
+            canBounce = false;
         }        
         // если в воздухе
         else
@@ -159,7 +174,6 @@ public class MoveScript : MonoBehaviour
             rb.drag = normalDrag;
             jumpForce = normalJumpForce;
             rb.gravityScale = rb.gravityScale + gravityMod;
-            isClimb = false;
         }   
     }
 
@@ -167,19 +181,28 @@ public class MoveScript : MonoBehaviour
     {
         if (h != 0)
         {
-            if(!IsWallNear)
+            if (!isBounce)
+            {
                 rb.AddForce(new Vector2(h, 0) * moveSpd);
-            Flip(h);
+                Flip(h);
+            }
+                
         }
                             
         Vector2 direction = Vector2.zero;
-        
-        if (Input.GetButtonDown("Jump") && isClimb)
+
+        if (canBounce && Input.GetButtonDown("Jump"))
         {
-            direction = new Vector2(jumpForce * -transform.localScale.x, jumpForce / modY);
-            rb.AddForce(direction, ForceMode2D.Impulse);
+            Flip(-transform.localScale.x);
         }
-        else if (jump == true){
+        
+        if (isBounce)
+        {
+            direction = new Vector2(transform.localScale.x, modY) * jumpForce;
+            //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
+            rb.AddForce(direction, ForceMode2D.Force);
+        }
+        else if (jump){
             direction = transform.up * jumpForce;   
             rb.AddForce(direction, ForceMode2D.Force);
         }
@@ -220,6 +243,6 @@ public class MoveScript : MonoBehaviour
     private void Flip(float h)
     {
         if (h != 0)
-            transform.localScale = new Vector3(h, transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(h > 0 ? 1 : -1, transform.localScale.y, transform.localScale.z);
     }
 }
