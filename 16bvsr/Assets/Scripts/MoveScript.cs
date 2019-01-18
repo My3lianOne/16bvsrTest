@@ -174,7 +174,12 @@ public class MoveScript : MonoBehaviour
             rb.drag = normalDrag;
             jumpForce = normalJumpForce;
             rb.gravityScale = rb.gravityScale + gravityMod;
-        }   
+        } 
+        
+        if (canBounce && Input.GetButtonDown("Jump"))
+        {
+            Flip(-transform.localScale.x);
+        }
     }
 
     private void FixedUpdate()
@@ -191,10 +196,6 @@ public class MoveScript : MonoBehaviour
                             
         Vector2 direction = Vector2.zero;
 
-        if (canBounce && Input.GetButtonDown("Jump"))
-        {
-            Flip(-transform.localScale.x);
-        }
         
         if (isBounce)
         {
