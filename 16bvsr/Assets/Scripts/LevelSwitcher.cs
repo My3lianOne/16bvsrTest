@@ -32,7 +32,7 @@ public class LevelSwitcher : MonoBehaviour
 
     [SerializeField] private GameObject fader;
 
-    private Animation fAnim;
+    private Animation anim;
 
     private bool isSwitching;
 
@@ -42,8 +42,8 @@ public class LevelSwitcher : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        fAnim = fader.GetComponent<Animation>();
-
+        anim = GetComponent<Animation>();
+        anim.clip.legacy = true;
         currentWorld = WORLDS.Real;        
         
         // Настройки слайдера
@@ -70,7 +70,7 @@ public class LevelSwitcher : MonoBehaviour
                            
             if(Input.GetButtonDown("Fire1"))
             {
-                Switch();
+                anim.Play();   
             }
         }
 
@@ -88,8 +88,8 @@ public class LevelSwitcher : MonoBehaviour
         }
         
         if (Input.GetButtonDown("Fire1") && canSwitch && !isSwitching)
-        {                        
-            Switch();       
+        {
+            anim.Play(); 
         }
 
         slider.value = cooldownTimer;
@@ -97,7 +97,7 @@ public class LevelSwitcher : MonoBehaviour
 
     public void Switch()
     {
-        fAnim.Play();
+        
         
         switch (currentWorld)
         {
