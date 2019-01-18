@@ -58,7 +58,7 @@ public class LevelSwitcher : MonoBehaviour
         {
             if (cooldownTimer <= 0)
             {
-                Switch();
+                anim.Play();   
             }
             else
             {
