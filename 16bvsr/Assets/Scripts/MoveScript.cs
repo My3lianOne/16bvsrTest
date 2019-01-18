@@ -14,7 +14,7 @@ public class MoveScript : MonoBehaviour
     [SerializeField]
     [Tooltip("Скорость перемещения")]
     float moveSpd = 0;
-
+    [SerializeField]
     private float jumpForce = 0;
 
     /// <summary>
@@ -199,7 +199,7 @@ public class MoveScript : MonoBehaviour
         
         if (isBounce)
         {
-            direction = new Vector2(transform.localScale.x, modY) * jumpForce;
+            direction = new Vector2(transform.localScale.x * jumpForce, modY) * (1 - jumpInput) ;
             //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
             rb.AddForce(direction, ForceMode2D.Force);
         }
