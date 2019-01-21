@@ -9,8 +9,7 @@ public class NPCShooter : MonoBehaviour
     [SerializeField] private Transform shootingPlace;
     
     List<GameObject> pool = new List<GameObject>();
-
-    [SerializeField] private float shootForce; 
+ 
 
     [SerializeField] private GameObject projectile;
 

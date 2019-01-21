@@ -9,10 +9,7 @@ public class SimpleNPC : MonoBehaviour
     [SerializeField]
     private float moveSpd;
     [SerializeField]
-    private GameObject target;    
-    [SerializeField] 
-    private Transform fieldOfView;
-
+    private GameObject target;
     private NPCShooter shooter;
 
     private Rigidbody2D rb;
@@ -23,11 +20,16 @@ public class SimpleNPC : MonoBehaviour
     private float idleTime;
 
     private float idleTimer;
+
+    private bool isGroundInFront;
+
+    private bool isWallInFront;
     
     
 
 
     [SerializeField] private Transform groundChecker;
+    [SerializeField] private Transform wallChecker;
 
     private void Start()
     {
@@ -39,8 +41,27 @@ public class SimpleNPC : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {                   
-        if (target)
+    {
+        if (groundChecker)
+        {
+            isGroundInFront = Physics2D.Linecast(transform.position, groundChecker.position,
+                1 << LayerMask.NameToLayer("Ground"));
+        }
+        else
+        {
+            isGroundInFront = true;
+        }
+        if (wallChecker)
+        {
+            isWallInFront = Physics2D.Linecast(transform.position, wallChecker.position,
+                1 << LayerMask.NameToLayer("Ground"));
+        }
+        else
+        {
+            isWallInFront = false;
+        }                        
+        
+        if (target && shooter)
         {
             shooter.Shoot();
         }
@@ -55,41 +76,19 @@ public class SimpleNPC : MonoBehaviour
                 Flip();
             }
         }
+        else if (isWallInFront)
+        {
+            Flip();
+        }
         else
         {
             rb.velocity = Vector2.right * (transform.localScale.x > 0 ? 1 : -1 ) * moveSpd;
-            if (!Physics2D.Linecast(transform.position, groundChecker.position, 1 << LayerMask.NameToLayer("Ground")))
+            if (!isGroundInFront )
             {
                 isIdle = true;
                 idleTimer = idleTime;
             }
-    
         }
-        
-        
-        /*else if (isPatrol)
-        {
-            if (!Physics2D.Linecast(transform.position, groundChecker.position, 1 << LayerMask.NameToLayer("Ground")))
-                isPatrol = false;
-            rb.velocity = Vector2.right * (transform.localScale.x > 0 ? 1 : -1 ) * moveSpd;
-            patrolTimer -= Time.deltaTime;
-            if (patrolTimer <= 0)
-            {
-                patrolTimer = 0;
-                isPatrol = false;
-            }
-        }
-        else
-        {
-            patrolTimer -= Time.deltaTime;
-            if (patrolTimer >= patrolTime)
-            {
-                patrolTimer = patrolTime;
-                isPatrol = true;
-                Flip();
-            }
-            rb.velocity = Vector2.zero;
-        }*/
     }
 
 
@@ -114,5 +113,4 @@ public class SimpleNPC : MonoBehaviour
         Vector3 scale = transform.localScale;
             transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
     }
-
 }

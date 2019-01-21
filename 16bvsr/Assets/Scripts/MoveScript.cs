@@ -29,7 +29,7 @@ public class MoveScript : MonoBehaviour
     /// </summary>
     [Tooltip("Щуп пола")]
     [SerializeField]
-    GameObject groundChecker;
+    GameObject [] groundCheckers;
     
     private Rigidbody2D rb;
 
@@ -83,7 +83,11 @@ public class MoveScript : MonoBehaviour
 
     public bool IsGrounded
     {
-        get { return isGrounded; }
+        get
+        {
+            
+            return isGrounded;
+        }
     }
     public bool IsWallNear
     {
@@ -107,8 +111,7 @@ public class MoveScript : MonoBehaviour
         // Получаем ось прыжка
         jumpInput = Input.GetAxis("Jump");
 
-        isGrounded = Physics2D.Linecast(transform.position, groundChecker.transform.position, 1 << LayerMask.NameToLayer("Ground")); 
-        //rb.IsTouchingLayers(1 << LayerMask.NameToLayer("Ground"));
+        GroundCheck();
         
         
         // если нажата кнопка прыжка, можно прыгать и ввод по оси не превышает 1
@@ -245,5 +248,18 @@ public class MoveScript : MonoBehaviour
     {
         if (h != 0)
             transform.localScale = new Vector3(h > 0 ? 1 : -1, transform.localScale.y, transform.localScale.z);
+    }
+
+    private void GroundCheck()
+    {
+        int fails = 0;
+        foreach (var checker in groundCheckers)
+        {
+            if (Physics2D.Linecast(transform.position, checker.transform.position,
+                    1 << LayerMask.NameToLayer("Ground")) == false)
+                fails++;
+        }
+
+        isGrounded = fails < 3;
     }
 }

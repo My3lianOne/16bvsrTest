@@ -25,6 +25,8 @@ public class HealthController : MonoBehaviour
     [Tooltip("Время неуязвимости")]
     [SerializeField]
     private float invulnerabilityTime;
+
+    [SerializeField] private GameObject gameController;
     // Временно.
     [SerializeField]
     private GameObject haloOfInvulnerability;        
@@ -42,21 +44,27 @@ public class HealthController : MonoBehaviour
     {
         currentHealth = maxHealth;
         IsDie = false;
+        gameController = GameObject.FindWithTag("GameController");        
     }
 
     // Update is called once per frame
     void Update()
     {
         // Костыль. Сделать связь с геймконтроллером.
-        if (IsDie) SceneManager.LoadScene("LevelSwitcher");
+        if (IsDie)
+        {
+            if (gameController)
+            {
+                
+            }
+            
+            transform.parent.gameObject.SetActive(false);
+        }       
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(whoIsEnemy.ToString()))
-        {
             Hurt();
-        }
     }
 
     /// <summary>
@@ -74,8 +82,7 @@ public class HealthController : MonoBehaviour
         }
 
         if (invulnerableAfterHurt)
-        {
-            
+        {            
             StartCoroutine(nameof(SetInvulnerable), invulnerabilityTime);
         }
     }
