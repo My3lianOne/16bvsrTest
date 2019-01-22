@@ -32,6 +32,12 @@ public class NPCHealthController : MonoBehaviour
         gameController = GameObject.FindWithTag("GameController");        
     }
 
+    private void OnDisable()
+    {
+        currentHealth = maxHealth;
+        IsDie = false;
+    }
+
     // Update is called once per frame
     void Update()
     {

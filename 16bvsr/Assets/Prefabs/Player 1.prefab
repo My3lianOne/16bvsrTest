@@ -465,7 +465,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ad192a0bf2f9448b3bfe1e3198d47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modY: 3
+  modY: 2
   moveSpd: 250
   jumpForce: 0
   wallChecker: {fileID: 4536002828344535091}
@@ -477,7 +477,7 @@ MonoBehaviour:
   normalDrag: 3
   climbDrag: 50
   normalJumpForce: 1000
-  climbJumpForce: 150
+  climbJumpForce: 100
   isGrounded: 1
   canJump: 1
   jump: 0
@@ -485,7 +485,7 @@ MonoBehaviour:
   jumpPressed: 0
   isBounce: 0
   canBounce: 0
-  gravityMod: 0.46
+  gravityMod: 0
   normalGravity: 9
 --- !u!70 &4536002829500650164
 CapsuleCollider2D:
