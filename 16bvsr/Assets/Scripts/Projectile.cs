@@ -25,7 +25,7 @@ public class Projectile : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         rb.velocity = Vector2.right * transform.localScale.x * moveSpd;        
     }
