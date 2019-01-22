@@ -18,6 +18,12 @@ public class Projectile : MonoBehaviour
     {
         Invoke(nameof(Deactivate), lifetime);
     }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -26,7 +32,7 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-            gameObject.SetActive(false);
+         gameObject.SetActive(false);
     }
     
     void Deactivate()
