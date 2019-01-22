@@ -64,7 +64,8 @@ public class HealthController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-            Hurt();
+            if(other.CompareTag("Enemy")) 
+                Hurt();
     }
 
     /// <summary>

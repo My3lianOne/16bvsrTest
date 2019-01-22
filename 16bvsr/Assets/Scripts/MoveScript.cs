@@ -202,7 +202,7 @@ public class MoveScript : MonoBehaviour
         
         if (isBounce)
         {
-            direction = new Vector2(transform.localScale.x * jumpForce, modY) * (1 - jumpInput) ;
+            direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) * (1 - jumpInput) ;
             //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
             rb.AddForce(direction, ForceMode2D.Force);
         }

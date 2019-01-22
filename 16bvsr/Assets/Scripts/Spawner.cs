@@ -38,17 +38,11 @@ public class Spawner : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("GameBuffer"))
-        {
             Spawn();
-        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("GameBuffer"))
-        {
             DeSpawn();
-        }
     }
 }

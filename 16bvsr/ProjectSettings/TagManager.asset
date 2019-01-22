@@ -8,6 +8,7 @@ TagManager:
   - Bound
   - NPC
   - GameBuffer
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -26,9 +27,9 @@ TagManager:
   - PlayerProjectiles
   - NPCHitBox
   - PlayerHitBox
-  - 
-  - 
-  - 
+  - PlayerPhysicalBox
+  - NPCPhysicalBox
+  - ActivateByBuffer
   - 
   - 
   - 
