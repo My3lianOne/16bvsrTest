@@ -19,7 +19,6 @@ public class NPCShooter : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
         canShoot = true;
         for (int i = 0; i < poolCapacity; i++)
         {
@@ -67,6 +66,11 @@ public class NPCShooter : MonoBehaviour
 
         yield return new WaitForSeconds(cooldown);
         
+        canShoot = true;
+    }
+
+    private void OnEnable()
+    {
         canShoot = true;
     }
 }

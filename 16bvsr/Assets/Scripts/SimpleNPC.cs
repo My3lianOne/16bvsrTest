@@ -42,6 +42,9 @@ public class SimpleNPC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
+        
         if (groundChecker)
         {
             isGroundInFront = Physics2D.Linecast(transform.position, groundChecker.position,
@@ -64,6 +67,11 @@ public class SimpleNPC : MonoBehaviour
         if (target && shooter)
         {
             shooter.Shoot();
+            if (target.activeSelf == false)
+            {
+                target = null;
+                isIdle = false;
+            }
         }
         else if (isIdle)
         {

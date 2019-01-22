@@ -56,8 +56,7 @@ public class HealthController : MonoBehaviour
             if (gameController)
             {
                 
-            }
-            
+            }            
             transform.parent.gameObject.SetActive(false);
         }       
     }
@@ -122,5 +121,17 @@ public class HealthController : MonoBehaviour
         isInvulnerable = false;
 
         if (haloOfInvulnerability) haloOfInvulnerability.SetActive(false);
-    } 
+    }
+
+    private void OnEnable()
+    {
+        currentHealth = maxHealth;
+        IsDie = false;
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        haloOfInvulnerability.SetActive(false);
+    }
 }    
