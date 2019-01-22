@@ -66,6 +66,12 @@ public class HealthController : MonoBehaviour
             if(other.CompareTag("Enemy")) 
                 Hurt();
     }
+    
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Bound"))
+            IsDie = true;
+    }
 
     /// <summary>
     /// Уменьшает количество HP на 1.
