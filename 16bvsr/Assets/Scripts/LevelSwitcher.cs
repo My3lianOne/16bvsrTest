@@ -20,8 +20,11 @@ public class LevelSwitcher : MonoBehaviour
     private float switchCooldown;
     [SerializeField] 
     private float cooldownTimer;
-    
-    
+
+    public float CooldownTimer => cooldownTimer;
+
+    public float SwitchCooldown => switchCooldown;
+
     [SerializeField] 
     private bool canSwitch;
     
@@ -47,8 +50,7 @@ public class LevelSwitcher : MonoBehaviour
         currentWorld = WORLDS.Real;        
         
         // Настройки слайдера
-        slider.maxValue = switchCooldown;
-        slider.value = 0;
+        
     }
 
     // Update is called once per frame

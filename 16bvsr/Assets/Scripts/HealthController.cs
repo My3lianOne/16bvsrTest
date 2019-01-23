@@ -49,12 +49,23 @@ public class HealthController : MonoBehaviour
 
     [SerializeField] private ENEMY whoIsEnemy;
     public bool IsDie { get; private set; }
+
+
+    public delegate void HealthState(int count);
+
+    public event HealthState HealthChanged;
+    public event HealthState MaxHealthChanged;
+    
     // Start is called before the first frame update
     void Start()
     {
+        
         currentHealth = maxHealth;
         IsDie = false;
-        gameController = GameObject.FindWithTag("GameController");        
+        gameController = GameObject.FindWithTag("GameController");
+
+        HealthChanged?.Invoke(currentHealth);
+        MaxHealthChanged?.Invoke(maxHealth);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -77,6 +88,7 @@ public class HealthController : MonoBehaviour
         if (currentHealth > 0 && !isInvulnerable)
         {
             currentHealth--;
+            HealthChanged?.Invoke(currentHealth);
             if (currentHealth <= 0)
             {
                 Die();
@@ -96,6 +108,7 @@ public class HealthController : MonoBehaviour
     public void Heal(int value)
     {
         currentHealth += value;
+        HealthChanged?.Invoke(currentHealth);
         if (currentHealth > maxHealth)
         {
             currentHealth = maxHealth;
@@ -106,7 +119,11 @@ public class HealthController : MonoBehaviour
     /// Увеливает максимальное количество HP на указанное количество поинтов.
     /// </summary>
     /// <param name="value">Количество поинтов</param>
-    public void IncreaseMaxHealth(int value) => maxHealth += value;
+    public void IncreaseMaxHealth(int value)
+    {
+        maxHealth += value;
+        MaxHealthChanged?.Invoke(maxHealth);
+    } 
 
     /// <summary>
     /// Делает неуязвимым на указанное время.

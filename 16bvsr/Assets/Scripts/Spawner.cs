@@ -41,10 +41,4 @@ public class Spawner : MonoBehaviour
             if(instance.activeSelf == false)
                 Spawn();
     }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if(instance.activeSelf == true)
-            DeSpawn();
-    }
 }

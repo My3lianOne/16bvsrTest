@@ -19,7 +19,10 @@ public class GameController : MonoBehaviour
     private Scene currentScene;
     
     public static GameController instance;
-    
+
+    public delegate void LivesCount(int count);
+
+    public event LivesCount LivesCountChanged;
     
     /// <summary>
     /// Первый чекпоинт на сцене
@@ -57,12 +60,15 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        LivesCountChanged?.Invoke(lives);
+        
+        
         playerHealthController = player.GetComponentInChildren<HealthController>();
         playerHealthController.PlayerDieEvent += OnPlayerDie;
         SceneManager.sceneLoaded += OnSceneLoad;
         firstCheckPoint = GameObject.FindWithTag("FirstCheckPoint");
         currentCheckPoint = firstCheckPoint;
-        player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);
+        player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);        
     }
 
 
@@ -77,6 +83,7 @@ public class GameController : MonoBehaviour
         if (lives > 0)
         {
             lives--;
+            LivesCountChanged?.Invoke(lives);
             // resurrect player
             // restore all objects on scene
             Invoke(nameof(ResurrectPlayer), 3);
@@ -85,6 +92,7 @@ public class GameController : MonoBehaviour
         {
             // GameOver
             lives = 3;
+            LivesCountChanged?.Invoke(lives);
             currentCheckPoint = firstCheckPoint;
             Invoke(nameof(ResurrectPlayer), 3);
         }
@@ -93,6 +101,7 @@ public class GameController : MonoBehaviour
     public void IncreaseLivesCount()
     {
         lives++;
+        LivesCountChanged?.Invoke(lives);
     }
 
 

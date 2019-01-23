@@ -12,6 +12,10 @@ public class NPCHealthController : MonoBehaviour
     [SerializeField]
     private int currentHealth;
 
+    private ItemDropper itemDropper;
+
+    private bool isOutOfBuffer;
+    
     [SerializeField] private GameObject gameController;
     // Временно.
      
@@ -29,7 +33,8 @@ public class NPCHealthController : MonoBehaviour
     {
         currentHealth = maxHealth;
         IsDie = false;
-        gameController = GameObject.FindWithTag("GameController");        
+        gameController = GameObject.FindWithTag("GameController");
+        itemDropper = GetComponentInParent<ItemDropper>();
     }
 
     private void OnDisable()
@@ -40,30 +45,35 @@ public class NPCHealthController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        // Костыль. Сделать связь с геймконтроллером.
-        if (IsDie)
-        {
-            if (gameController)
-            {
-                
-            }
-            
-            transform.parent.gameObject.SetActive(false);
-        }    
+    { 
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            return;
+
+        }
+        else if (other.CompareTag("GameBuffer"))
+        {
+            isOutOfBuffer = false;
         }
         else
         {
             Hurt();
         }
     }
+    
+    
+    
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("GameBuffer"))
+            isOutOfBuffer = true;
+        Invoke(nameof(Deactivate), 10);            
+    }
+    
+
 
     /// <summary>
     /// Уменьшает количество HP на 1.
@@ -75,8 +85,20 @@ public class NPCHealthController : MonoBehaviour
             currentHealth--;
             if (currentHealth <= 0)
             {
-                IsDie = true;
+                Die();
             }
         }
+    }
+
+    public void Die()
+    {
+        itemDropper.Drop();
+        transform.parent.gameObject.SetActive(false);
+    }
+
+    void Deactivate()
+    {
+        if(isOutOfBuffer)
+            transform.parent.gameObject.SetActive(false);
     }
 }
