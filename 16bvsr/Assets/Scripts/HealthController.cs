@@ -145,6 +145,7 @@ public class HealthController : MonoBehaviour
     private void OnEnable()
     {
         currentHealth = maxHealth;
+        HealthChanged?.Invoke(currentHealth);
         IsDie = false;
     }
 
