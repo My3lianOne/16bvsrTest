@@ -1,10 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class HealthController : MonoBehaviour
 {
+    public delegate void PlayerDie();
+
+    public event PlayerDie PlayerDieEvent;
+    
+    
+    
     [Tooltip("Максимальные HP")]
     [SerializeField]
     private int maxHealth;   
@@ -12,6 +20,8 @@ public class HealthController : MonoBehaviour
     [Tooltip("Текущие HP")]
     [SerializeField]
     private int currentHealth;
+
+    [SerializeField] private int lives;
 
     /// <summary>
     /// Неуязвимый?
@@ -47,20 +57,6 @@ public class HealthController : MonoBehaviour
         gameController = GameObject.FindWithTag("GameController");        
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // Костыль. Сделать связь с геймконтроллером.
-        if (IsDie)
-        {
-            if (gameController)
-            {
-                
-            }            
-            transform.parent.gameObject.SetActive(false);
-        }       
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
             if(other.CompareTag("Enemy")) 
@@ -70,7 +66,7 @@ public class HealthController : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Bound"))
-            IsDie = true;
+            Die();
     }
 
     /// <summary>
@@ -83,7 +79,7 @@ public class HealthController : MonoBehaviour
             currentHealth--;
             if (currentHealth <= 0)
             {
-                IsDie = true;
+                Die();
             }
         }
 
@@ -138,6 +134,14 @@ public class HealthController : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
-        haloOfInvulnerability.SetActive(false);
+        haloOfInvulnerability.SetActive(false);        
+    }
+
+
+    private void Die()
+    {
+        IsDie = true; 
+        PlayerDieEvent?.Invoke();    
+        transform.parent.gameObject.SetActive(false);
     }
 }    

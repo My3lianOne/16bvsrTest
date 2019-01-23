@@ -226,10 +226,6 @@ public class MoveScript : MonoBehaviour
         {
             col.enabled = true;
         }
-        else if (other.CompareTag("Bound"))
-        {
-            SceneManager.LoadScene("LevelSwitcher");
-        }
     }
 
     private void OnTriggerStay2D(Collider2D other)

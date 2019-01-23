@@ -9,6 +9,7 @@ TagManager:
   - NPC
   - GameBuffer
   - Enemy
+  - FirstCheckPoint
   layers:
   - Default
   - TransparentFX
@@ -30,7 +31,7 @@ TagManager:
   - PlayerPhysicalBox
   - NPCPhysicalBox
   - ActivateByBuffer
-  - 
+  - CheckPoints
   - 
   - 
   - 

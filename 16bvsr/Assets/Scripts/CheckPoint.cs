@@ -5,22 +5,26 @@ using UnityEngine;
 public class CheckPoint : MonoBehaviour
 {
 
-    private GameObject player;
+    private GameController gameController;
     
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindWithTag("Player");
+        gameController = FindObjectOfType<GameController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (player.activeSelf == false)
+        if (other.CompareTag("Player"))
         {
-            player.SetActive(true);
-            player.GetComponent<Rigidbody2D>().MovePosition(this.transform.position);
-            
+            if (gameController.CurrentCheckPoint != this.gameObject)
+                ActivateCheckPoint(); 
         }
+        
+    }
+
+    public void ActivateCheckPoint()
+    {
+        gameController.SetCheckPoint(this.gameObject);
     }
 }
