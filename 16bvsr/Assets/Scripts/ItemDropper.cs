@@ -8,7 +8,7 @@ public class ItemDropper : MonoBehaviour
     private ItemsManager itemsManager;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         itemsManager = FindObjectOfType<ItemsManager>();
     }
