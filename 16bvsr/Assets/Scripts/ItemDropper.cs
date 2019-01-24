@@ -19,6 +19,7 @@ public class ItemDropper : MonoBehaviour
         if (item)
         {
             item.SetActive(true);
+            item.GetComponent<CollectableItem>().LifeTimeOver();
             item.transform.position = this.transform.position;
         }
     }

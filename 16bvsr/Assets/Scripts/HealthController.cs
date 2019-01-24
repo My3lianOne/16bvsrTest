@@ -15,14 +15,33 @@ public class HealthController : MonoBehaviour
     
     [Tooltip("Максимальные HP")]
     [SerializeField]
-    private int maxHealth;   
+    private int maxHealth;
+
+    public int MaxHealth
+    {
+        get => maxHealth;
+        set
+        {
+            maxHealth = value;
+            MaxHealthChanged?.Invoke(MaxHealth);
+        }
+    }
     
     [Tooltip("Текущие HP")]
     [SerializeField]
     private int currentHealth;
+    
 
-    [SerializeField] private int lives;
-
+    [SerializeField]
+    private int Health
+    {
+        get => currentHealth;
+        set
+        {
+            currentHealth = value;
+            HealthChanged?.Invoke(currentHealth);
+        }
+    }
     /// <summary>
     /// Неуязвимый?
     /// </summary>
@@ -59,13 +78,9 @@ public class HealthController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-        currentHealth = maxHealth;
+        Health = MaxHealth;
         IsDie = false;
-        gameController = GameObject.FindWithTag("GameController");
-
-        HealthChanged?.Invoke(currentHealth);
-        MaxHealthChanged?.Invoke(maxHealth);
+        gameController = GameObject.FindWithTag("GameController");               
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -85,20 +100,21 @@ public class HealthController : MonoBehaviour
     /// </summary>
     public void Hurt()
     {
-        if (currentHealth > 0 && !isInvulnerable)
+        if (Health > 0 && !isInvulnerable)
         {
-            currentHealth--;
-            HealthChanged?.Invoke(currentHealth);
-            if (currentHealth <= 0)
+            Health--;
+            if (Health <= 0)
             {
                 Die();
+                return;
+            }
+            if (invulnerableAfterHurt)
+            {            
+                StartCoroutine(nameof(SetInvulnerable), invulnerabilityTime);
             }
         }
 
-        if (invulnerableAfterHurt)
-        {            
-            StartCoroutine(nameof(SetInvulnerable), invulnerabilityTime);
-        }
+
     }
 
     /// <summary>
@@ -107,11 +123,10 @@ public class HealthController : MonoBehaviour
     /// <param name="value">Количество поинтов</param>
     public void Heal(int value)
     {
-        currentHealth += value;
-        HealthChanged?.Invoke(currentHealth);
-        if (currentHealth > maxHealth)
+        Health += value;
+        if (Health > MaxHealth)
         {
-            currentHealth = maxHealth;
+            Health = MaxHealth;
         }
     }
 
@@ -121,8 +136,7 @@ public class HealthController : MonoBehaviour
     /// <param name="value">Количество поинтов</param>
     public void IncreaseMaxHealth(int value)
     {
-        maxHealth += value;
-        MaxHealthChanged?.Invoke(maxHealth);
+        MaxHealth += value;
     } 
 
     /// <summary>
@@ -144,8 +158,7 @@ public class HealthController : MonoBehaviour
 
     private void OnEnable()
     {
-        currentHealth = maxHealth;
-        HealthChanged?.Invoke(currentHealth);
+        Health = MaxHealth;
         IsDie = false;
     }
 

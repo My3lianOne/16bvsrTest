@@ -91,9 +91,7 @@ public class PlayerController : MonoBehaviour
 
     }
     void FixedUpdate()
-    {
-        
-
+    {        
         if (v >= 1) canJump = false;
         
         h = Input.GetAxisRaw("Horizontal");

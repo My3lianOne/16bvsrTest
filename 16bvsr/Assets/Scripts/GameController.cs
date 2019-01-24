@@ -23,6 +23,8 @@ public class GameController : MonoBehaviour
     public delegate void LivesCount(int count);
 
     public event LivesCount LivesCountChanged;
+
+    public static List<GameObject> gameObjects;
     
     /// <summary>
     /// Первый чекпоинт на сцене
@@ -35,6 +37,8 @@ public class GameController : MonoBehaviour
     {
         get => currentCheckPoint;
     }
+
+    private Animation anim;
     
     /// <summary>
     /// Количество жизней
@@ -68,7 +72,11 @@ public class GameController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoad;
         firstCheckPoint = GameObject.FindWithTag("FirstCheckPoint");
         currentCheckPoint = firstCheckPoint;
-        player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);        
+        player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);
+
+        gameObjects = new List<GameObject>();
+
+        anim = GetComponent<Animation>();
     }
 
 
@@ -86,7 +94,7 @@ public class GameController : MonoBehaviour
             LivesCountChanged?.Invoke(lives);
             // resurrect player
             // restore all objects on scene
-            Invoke(nameof(ResurrectPlayer), 3);
+            Invoke(nameof(OnGameEnd), 3);
         }
         else
         {
@@ -94,8 +102,10 @@ public class GameController : MonoBehaviour
             lives = 3;
             LivesCountChanged?.Invoke(lives);
             currentCheckPoint = firstCheckPoint;
-            Invoke(nameof(ResurrectPlayer), 3);
+            Invoke(nameof(OnGameEnd), 3);
         }
+        
+        
     }
 
     public void IncreaseLivesCount()
@@ -114,7 +124,7 @@ public class GameController : MonoBehaviour
     private void ResurrectPlayer()
     {
         player.SetActive(true);
-        player.transform.position = currentCheckPoint.transform.position;    
+        player.transform.position = currentCheckPoint.transform.position;
     }
 
 
@@ -123,6 +133,26 @@ public class GameController : MonoBehaviour
         currentCheckPoint = firstCheckPoint;
         player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);   
     }
-    
+
+    void DespawnObjects()
+    {
+        gameObjects.AddRange(GameObject.FindGameObjectsWithTag("NPC"));
+        gameObjects.AddRange(GameObject.FindGameObjectsWithTag("CollectableItem"));
+        foreach (GameObject obj in gameObjects)
+        {
+            if(obj.activeSelf) obj.SetActive(false);
+        }
+    }
+
+    void ReloadGame()
+    {
+        DespawnObjects();
+        ResurrectPlayer();
+    }
+
+    void OnGameEnd()
+    {
+        anim.Play("OnGameEndFader");
+    }
     
 }

@@ -98,9 +98,7 @@ public class LevelSwitcher : MonoBehaviour
     }
 
     public void Switch()
-    {
-        
-        
+    {                
         switch (currentWorld)
         {
             // Switch to PixelWorld

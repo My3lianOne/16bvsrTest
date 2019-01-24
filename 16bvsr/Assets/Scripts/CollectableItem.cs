@@ -5,7 +5,7 @@ using UnityEngine;
 public class CollectableItem : MonoBehaviour, ICollectable
 {
     // Start is called before the first frame update
-
+    [SerializeField] private float lifetime;
     // Update is called once per frame
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -23,5 +23,10 @@ public class CollectableItem : MonoBehaviour, ICollectable
     public virtual void Deactivate()
     {
         this.gameObject.SetActive(false);
+    }
+
+    public void LifeTimeOver()
+    {
+        Invoke(nameof(Deactivate), lifetime);
     }
 }

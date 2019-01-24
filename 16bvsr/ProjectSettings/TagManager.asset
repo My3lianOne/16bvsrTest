@@ -10,6 +10,7 @@ TagManager:
   - GameBuffer
   - Enemy
   - FirstCheckPoint
+  - CollectableItem
   layers:
   - Default
   - TransparentFX

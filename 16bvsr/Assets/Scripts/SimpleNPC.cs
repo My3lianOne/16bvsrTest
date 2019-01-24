@@ -64,14 +64,14 @@ public class SimpleNPC : MonoBehaviour
             isWallInFront = false;
         }                        
         
-        if (target && shooter)
+        if (target)
         {
-            shooter.Shoot();
-            if (target.activeSelf == false)
+            if (shooter)
             {
-                target = null;
-                isIdle = false;
+                shooter.Shoot();
             }
+                
+
         }
         else if (isIdle)
         {
@@ -100,21 +100,25 @@ public class SimpleNPC : MonoBehaviour
     }
 
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             target = other.gameObject;
         }
+        else
+        {
+            target = null;
+        }
     }
     
-    void OnTriggerExit2D(Collider2D other)
+/*    void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             target = null;
         }
-    }
+    }*/
 
     private void Flip()
     {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -44,7 +45,11 @@ public class MoveScript : MonoBehaviour
     [SerializeField]
     [Tooltip("Сопротивление (замедление) при обычном состоянии")]
     float normalDrag = 2;
-
+    
+    [SerializeField]
+    [Tooltip("Сопротивление (замедление) в воздухе")]
+    float airDrag = 2;
+    
     [SerializeField]
     [Tooltip("Скорость скольжения по стене (больше - медленнее)")]
     float climbDrag = 50;
@@ -97,11 +102,27 @@ public class MoveScript : MonoBehaviour
                 1 << LayerMask.NameToLayer("Ground"));
         }
     }
+
+
+    #region Animator
+
+    private Animator animator;
+    private static readonly int JumpInput = Animator.StringToHash("jumpInput");
+    private static readonly int Grounded = Animator.StringToHash("IsGrounded");
+    private static readonly int CanJump = Animator.StringToHash("canJump");
+    private static readonly int Running = Animator.StringToHash("Running");
+    private static readonly int IsClimb = Animator.StringToHash("IsClimb");
+
+    #endregion
+
+    
     
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+
+        animator = GetComponent<Animator>();
     }
     
     void Update()
@@ -174,7 +195,7 @@ public class MoveScript : MonoBehaviour
         // если в воздухе
         else
         {
-            rb.drag = normalDrag;
+            rb.drag = airDrag;
             jumpForce = normalJumpForce;
             rb.gravityScale = rb.gravityScale + gravityMod;
         } 
@@ -257,5 +278,14 @@ public class MoveScript : MonoBehaviour
         }
 
         isGrounded = fails < 3;
+    }
+
+    private void LateUpdate()
+    {
+        animator.SetFloat(JumpInput, jumpInput);
+        animator.SetBool(Grounded, isGrounded);
+        animator.SetBool(CanJump, canJump);
+        animator.SetInteger(Running, Convert.ToInt32(h));
+        animator.SetBool(IsClimb, isClimb);
     }
 }
