@@ -113,7 +113,7 @@ public class HealthController : MonoBehaviour
         {
             Health--;
             anim.SetTrigger(Hurt1);
-            StartCoroutine(nameof(PointEffector), 0.5f);
+            StartCoroutine(nameof(PointEffector), 0.1f);
             if (Health <= 0)
             {
                 Die();

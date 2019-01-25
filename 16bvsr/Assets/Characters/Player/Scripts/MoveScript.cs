@@ -159,7 +159,7 @@ public class MoveScript : MonoBehaviour
 
         if (IsWallNear == true && isGrounded == false)
         {
-            if (h == transform.localScale.x && !jump)
+            if (h != 0 && !jump)
             {
                 isClimb = true;
             }
