@@ -49073,7 +49073,7 @@ PrefabInstance:
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: modY
-      value: 1.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
@@ -49083,7 +49083,7 @@ PrefabInstance:
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: pauseTime
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}

@@ -126,7 +126,7 @@ public class MoveScript : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-
+        fallPause = true;
         animator = GetComponent<Animator>();
     }
     
@@ -167,6 +167,11 @@ public class MoveScript : MonoBehaviour
         {
             if (h == transform.localScale.x && !jump)
             {
+                
+                if (fallPause)
+                {
+                    StartCoroutine(nameof(FallPause));
+                }
                 isClimb = true;
             }
             else
@@ -188,6 +193,7 @@ public class MoveScript : MonoBehaviour
         // Если сползаем по стене
         if (isClimb)
         {
+            
             jumpForce = climbJumpForce;
             rb.drag = climbDrag;
             canBounce = true;
@@ -208,12 +214,13 @@ public class MoveScript : MonoBehaviour
             rb.drag = airDrag;
             jumpForce = normalJumpForce;
             rb.gravityScale = rb.gravityScale + gravityMod;
+            fallPause = true;
         } 
         
         if (canBounce && Input.GetButtonDown("Jump"))
         {
             Flip(-transform.localScale.x);
-            StartCoroutine(nameof(FallPause));
+            
         }
 
         if (h == 0 && !isClimb && !isBounce && isGrounded) 
@@ -247,12 +254,11 @@ public class MoveScript : MonoBehaviour
         
         if (isBounce)
         {
-            if(!fallPause)
-            {
+
                 direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) ;
                 //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
                 rb.AddForce(direction, ForceMode2D.Force);
-            }                                   
+                              
         }
         else if (jump){
             direction = transform.up * jumpForce;   
@@ -325,12 +331,12 @@ public class MoveScript : MonoBehaviour
 
     IEnumerator FallPause()
     {
-        fallPause = true;
+        fallPause = false;
         rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
         yield return new WaitForSeconds(pauseTime);
         
-        fallPause = false;
+        
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 }
