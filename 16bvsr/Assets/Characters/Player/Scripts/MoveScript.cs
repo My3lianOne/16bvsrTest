@@ -10,7 +10,7 @@ public class MoveScript : MonoBehaviour
     /// </summary>
     [SerializeField]
     [Tooltip("Модификатор уменьшения силы прыжка по Y")]
-    private int modY = 4;
+    private float modY = 4;
 
     [SerializeField]
     [Tooltip("Скорость перемещения")]
@@ -159,7 +159,7 @@ public class MoveScript : MonoBehaviour
 
         if (IsWallNear == true && isGrounded == false)
         {
-            if (h != 0 && !jump)
+            if (h == transform.localScale.x && !jump)
             {
                 isClimb = true;
             }
@@ -239,6 +239,7 @@ public class MoveScript : MonoBehaviour
         if (isBounce)
         {
             direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) ;
+            
             //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
             rb.AddForce(direction, ForceMode2D.Force);
         }
