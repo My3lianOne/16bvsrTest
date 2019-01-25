@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +13,11 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Модификатор уменьшения силы прыжка по Y")]
     private float modY = 4;
 
+    
+    [SerializeField]
+
+    private float pauseTime = 4;
+    
     [SerializeField]
     [Tooltip("Скорость перемещения")]
     float moveSpd = 0;
@@ -207,6 +213,7 @@ public class MoveScript : MonoBehaviour
         if (canBounce && Input.GetButtonDown("Jump"))
         {
             Flip(-transform.localScale.x);
+            StartCoroutine(nameof(FallPause));
         }
 
         if (h == 0 && !isClimb && !isBounce && isGrounded) 
@@ -220,6 +227,8 @@ public class MoveScript : MonoBehaviour
         }
     }
 
+
+    private bool fallPause;
     private void FixedUpdate()
     {
         if (h != 0)
@@ -238,10 +247,12 @@ public class MoveScript : MonoBehaviour
         
         if (isBounce)
         {
-            direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) ;
-            
-            //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
-            rb.AddForce(direction, ForceMode2D.Force);
+            if(!fallPause)
+            {
+                direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) ;
+                //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
+                rb.AddForce(direction, ForceMode2D.Force);
+            }                                   
         }
         else if (jump){
             direction = transform.up * jumpForce;   
@@ -310,5 +321,16 @@ public class MoveScript : MonoBehaviour
     void SetIdleState()
     {
         isIdle = true;
+    }
+
+    IEnumerator FallPause()
+    {
+        fallPause = true;
+        rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
+        yield return new WaitForSeconds(pauseTime);
+        
+        fallPause = false;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 }
