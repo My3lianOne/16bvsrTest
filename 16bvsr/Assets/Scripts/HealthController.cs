@@ -42,6 +42,10 @@ public class HealthController : MonoBehaviour
             HealthChanged?.Invoke(currentHealth);
         }
     }
+
+    [SerializeField] private Transform pointEffectorPlace;
+    [SerializeField] private GameObject pointEffector;
+    
     /// <summary>
     /// Неуязвимый?
     /// </summary>
@@ -74,10 +78,15 @@ public class HealthController : MonoBehaviour
 
     public event HealthState HealthChanged;
     public event HealthState MaxHealthChanged;
-    
+
+
+    private Animator anim;
+    private static readonly int Hurt1 = Animator.StringToHash("Hurt");
+
     // Start is called before the first frame update
     void Start()
     {
+        anim = GetComponentInParent<Animator>();
         Health = MaxHealth;
         IsDie = false;
         gameController = GameObject.FindWithTag("GameController");               
@@ -103,6 +112,8 @@ public class HealthController : MonoBehaviour
         if (Health > 0 && !isInvulnerable)
         {
             Health--;
+            anim.SetTrigger(Hurt1);
+            StartCoroutine(nameof(PointEffector), 0.5f);
             if (Health <= 0)
             {
                 Die();
@@ -143,23 +154,24 @@ public class HealthController : MonoBehaviour
     /// Делает неуязвимым на указанное время.
     /// </summary>
     private IEnumerator SetInvulnerable(float time)
-    {
-        isInvulnerable = true;
-
-        if (haloOfInvulnerability) haloOfInvulnerability.SetActive(true);
-        
-        
-        yield return new WaitForSeconds(time);
-
-        isInvulnerable = false;
-
-        if (haloOfInvulnerability) haloOfInvulnerability.SetActive(false);
-    }
+         {
+             isInvulnerable = true;
+     
+             if (haloOfInvulnerability) haloOfInvulnerability.SetActive(true);
+             
+             
+             yield return new WaitForSeconds(time);
+     
+             isInvulnerable = false;
+     
+             if (haloOfInvulnerability) haloOfInvulnerability.SetActive(false);
+         }
 
     private void OnEnable()
     {
         Health = MaxHealth;
         IsDie = false;
+        pointEffector.SetActive(false);
     }
 
     private void OnDisable()
@@ -174,5 +186,18 @@ public class HealthController : MonoBehaviour
         IsDie = true; 
         PlayerDieEvent?.Invoke();    
         transform.parent.gameObject.SetActive(false);
+    }
+    
+    private IEnumerator PointEffector(float time)
+    {
+        if (pointEffector)
+        {
+            pointEffector.transform.position = pointEffectorPlace.position;
+            pointEffector.SetActive(true);
+        }
+                
+        yield return new WaitForSeconds(time);
+        
+        if (pointEffector) pointEffector.SetActive(false);
     }
 }    

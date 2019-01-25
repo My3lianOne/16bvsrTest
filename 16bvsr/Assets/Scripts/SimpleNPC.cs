@@ -41,10 +41,7 @@ public class SimpleNPC : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-
-
-        
+    {        
         if (groundChecker)
         {
             isGroundInFront = Physics2D.Linecast(transform.position, groundChecker.position,
@@ -54,6 +51,7 @@ public class SimpleNPC : MonoBehaviour
         {
             isGroundInFront = true;
         }
+        
         if (wallChecker)
         {
             isWallInFront = Physics2D.Linecast(transform.position, wallChecker.position,
@@ -69,9 +67,7 @@ public class SimpleNPC : MonoBehaviour
             if (shooter)
             {
                 shooter.Shoot();
-            }
-                
-
+            }                
         }
         else if (isIdle)
         {
@@ -100,7 +96,7 @@ public class SimpleNPC : MonoBehaviour
     }
 
 
-    void OnTriggerStay2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -112,13 +108,13 @@ public class SimpleNPC : MonoBehaviour
         }
     }
     
-/*    void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             target = null;
         }
-    }*/
+    }
 
     private void Flip()
     {

@@ -133,7 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 3
-  moveSpd: 20
+  moveSpd: 10
 --- !u!96 &8714819454312344296
 TrailRenderer:
   serializedVersion: 2

@@ -41,6 +41,7 @@ public class MoveScript : MonoBehaviour
     [SerializeField]
     private bool isClimb;
 
+    public bool IsClimbed => isClimb;
 
     [SerializeField]
     [Tooltip("Сопротивление (замедление) при обычном состоянии")]
@@ -76,7 +77,8 @@ public class MoveScript : MonoBehaviour
     float h;
     [SerializeField]
     private bool canBounce;
-    
+    [SerializeField]
+    private bool canMove;
     
     [SerializeField]
     [Tooltip("Бустер гравитации при прыжке")]
@@ -86,14 +88,10 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Обычная гравитация")]
     private float normalGravity;
 
-    public bool IsGrounded
-    {
-        get
-        {
-            
-            return isGrounded;
-        }
-    }
+    
+    private bool isIdle;
+    public bool IsGrounded => isGrounded;
+
     public bool IsWallNear
     {
         get
@@ -112,6 +110,7 @@ public class MoveScript : MonoBehaviour
     private static readonly int CanJump = Animator.StringToHash("canJump");
     private static readonly int Running = Animator.StringToHash("Running");
     private static readonly int IsClimb = Animator.StringToHash("IsClimb");
+    private static readonly int IsIdle = Animator.StringToHash("IsIdle");
 
     #endregion
 
@@ -160,7 +159,7 @@ public class MoveScript : MonoBehaviour
 
         if (IsWallNear == true && isGrounded == false)
         {
-            if (h != 0 && !jump)
+            if (h == transform.localScale.x && !jump)
             {
                 isClimb = true;
             }
@@ -174,14 +173,19 @@ public class MoveScript : MonoBehaviour
             isClimb = false;
             
         }
+
+        if (IsWallNear || canBounce)
+            canMove = false;
+        else
+            canMove = true;
         
         // Если сползаем по стене
         if (isClimb)
         {
             jumpForce = climbJumpForce;
             rb.drag = climbDrag;
-            rb.gravityScale = 9;
             canBounce = true;
+            rb.gravityScale = 20;
         }
         // если находимся на земле
         else if (isGrounded)
@@ -204,16 +208,27 @@ public class MoveScript : MonoBehaviour
         {
             Flip(-transform.localScale.x);
         }
+
+        if (h == 0 && !isClimb && !isBounce && isGrounded) 
+        {
+            if(!IsInvoking())
+                Invoke(nameof(SetIdleState), 3);
+        }
+        else
+        {
+            isIdle = false;
+        }
     }
 
     private void FixedUpdate()
     {
         if (h != 0)
-        {
-            if (!isBounce)
-            {
-                rb.AddForce(new Vector2(h, 0) * moveSpd);
+        {    
+            if(!canBounce)
                 Flip(h);
+            if (canMove)
+            {
+                rb.AddForce(new Vector2(h, 0) * moveSpd);                                
             }
                 
         }
@@ -223,7 +238,7 @@ public class MoveScript : MonoBehaviour
         
         if (isBounce)
         {
-            direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) * (1 - jumpInput) ;
+            direction = new Vector2(transform.localScale.x * jumpForce, jumpForce * modY) ;
             //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
             rb.AddForce(direction, ForceMode2D.Force);
         }
@@ -231,6 +246,7 @@ public class MoveScript : MonoBehaviour
             direction = transform.up * jumpForce;   
             rb.AddForce(direction, ForceMode2D.Force);
         }
+        rb.velocity = Vector2.zero;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -287,5 +303,11 @@ public class MoveScript : MonoBehaviour
         animator.SetBool(CanJump, canJump);
         animator.SetInteger(Running, Convert.ToInt32(h));
         animator.SetBool(IsClimb, isClimb);
+        animator.SetBool(IsIdle, isIdle);
+    }
+
+    void SetIdleState()
+    {
+        isIdle = true;
     }
 }

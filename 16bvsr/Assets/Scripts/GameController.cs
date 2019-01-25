@@ -20,9 +20,9 @@ public class GameController : MonoBehaviour
     
     public static GameController instance;
 
-    public delegate void LivesCount(int count);
+    public delegate void LivesCountEvents(int count);
 
-    public event LivesCount LivesCountChanged;
+    public event LivesCountEvents LivesCountChanged;
 
     public static List<GameObject> gameObjects;
     
@@ -40,10 +40,22 @@ public class GameController : MonoBehaviour
 
     private Animation anim;
     
+    private int lives;
+    
     /// <summary>
     /// Количество жизней
     /// </summary>
-    [SerializeField] private int lives;
+    [SerializeField] private int defaultLivesCount;
+
+    public int LivesCount
+    {
+        get => lives;
+        set
+        {
+            lives = value;
+            LivesCountChanged?.Invoke(lives);
+        }
+    }
     
 
     void Awake()
@@ -64,7 +76,7 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        LivesCountChanged?.Invoke(lives);
+        LivesCount = defaultLivesCount;
         
         
         playerHealthController = player.GetComponentInChildren<HealthController>();
@@ -91,7 +103,7 @@ public class GameController : MonoBehaviour
         if (lives > 0)
         {
             lives--;
-            LivesCountChanged?.Invoke(lives);
+            
             // resurrect player
             // restore all objects on scene
             Invoke(nameof(OnGameEnd), 3);
@@ -99,8 +111,7 @@ public class GameController : MonoBehaviour
         else
         {
             // GameOver
-            lives = 3;
-            LivesCountChanged?.Invoke(lives);
+            LivesCount = defaultLivesCount;
             currentCheckPoint = firstCheckPoint;
             Invoke(nameof(OnGameEnd), 3);
         }
@@ -110,8 +121,7 @@ public class GameController : MonoBehaviour
 
     public void IncreaseLivesCount()
     {
-        lives++;
-        LivesCountChanged?.Invoke(lives);
+        LivesCount++;
     }
 
 

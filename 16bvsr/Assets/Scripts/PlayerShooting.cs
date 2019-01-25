@@ -15,6 +15,8 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private GameObject projectile;
 
     private Animator anim;
+
+    private MoveScript moveScript;
     // Start is called before the first frame update
     void Awake()
     {
@@ -27,7 +29,9 @@ public class PlayerShooting : MonoBehaviour
             obj.SetActive(false);
             pool.Add(obj);
         }
-            
+
+        moveScript = GetComponent<MoveScript>();
+
     }
 
     // Update is called once per frame
@@ -36,6 +40,7 @@ public class PlayerShooting : MonoBehaviour
         if (Input.GetButtonDown("Fire2"))
         {
             anim.SetTrigger("Shoot");
+            SpawnProjectile();
         }
     }
     
@@ -49,7 +54,14 @@ public class PlayerShooting : MonoBehaviour
             {   
                 proj.SetActive(true);  
                 proj.transform.position = shootingPlace.position;
-                proj.transform.localScale = transform.localScale;
+                if (moveScript.IsClimbed)
+                {
+                    proj.transform.localScale = new Vector3(transform.localScale.x * -1, 1,1);
+                }
+                else
+                {
+                    proj.transform.localScale = transform.localScale;
+                }
                                 
                 return proj;
             }
