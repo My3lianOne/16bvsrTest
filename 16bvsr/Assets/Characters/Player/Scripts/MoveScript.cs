@@ -220,6 +220,8 @@ public class MoveScript : MonoBehaviour
         if (canBounce && Input.GetButtonDown("Jump"))
         {
             Flip(-transform.localScale.x);
+            StopAllCoroutines();
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
             
         }
 
@@ -331,10 +333,10 @@ public class MoveScript : MonoBehaviour
     IEnumerator FallPause()
     {
         fallPause = false;
+        
         rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
         yield return new WaitForSeconds(pauseTime);
-        
         
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
