@@ -49073,7 +49073,7 @@ PrefabInstance:
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: modY
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
@@ -49083,17 +49083,52 @@ PrefabInstance:
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: pauseTime
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: airDrag
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: moveSpd
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: jumpForce
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: normalJumpForce
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: climbJumpForce
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: gravityMod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: normalGravity
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4536002828507262898, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: pointEffector
       value: 
       objectReference: {fileID: 1306388483}
+    - target: {fileID: 4536002829500650171, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 550bdcd874de54441a562f76566ac5e7, type: 3}
