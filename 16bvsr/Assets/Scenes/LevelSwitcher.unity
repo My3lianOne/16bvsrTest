@@ -49021,10 +49021,35 @@ PrefabInstance:
       propertyPath: pauseTime
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: modY
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: jumpForce
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: normalJumpForce
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4536002829500650165, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: climbJumpForce
+      value: 5000
+      objectReference: {fileID: 0}
     - target: {fileID: 4536002828507262898, guid: 550bdcd874de54441a562f76566ac5e7,
         type: 3}
       propertyPath: pointEffector
       value: 
       objectReference: {fileID: 1306388483}
+    - target: {fileID: 4536002828344535088, guid: 550bdcd874de54441a562f76566ac5e7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.744
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 550bdcd874de54441a562f76566ac5e7, type: 3}
