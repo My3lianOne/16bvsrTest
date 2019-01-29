@@ -334,7 +334,7 @@ public class MoveScript : MonoBehaviour
     {
         fallPause = false;
         
-        rb.constraints = RigidbodyConstraints2D.FreezePosition;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
         yield return new WaitForSeconds(pauseTime);
         
