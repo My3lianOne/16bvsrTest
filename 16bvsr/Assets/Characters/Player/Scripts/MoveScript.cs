@@ -136,18 +136,23 @@ public class MoveScript : MonoBehaviour
      
         if (isWallNear && isGrounded == false)
         {
-            if (h == transform.localScale.x && rb.velocity.y < 0)
+            
+            if (h == transform.localScale.x && rb.velocity.y <= 0)
             {
-                isClimb = true;
+                if(fallPause)
+                    StartCoroutine(nameof(FallPause));
+
             }
             else
             {
                 isClimb = false;
+                fallPause = true;
             }
         }
         else
         {
             isClimb = false;
+            fallPause = true;
             
         }
 
@@ -174,7 +179,6 @@ public class MoveScript : MonoBehaviour
         {
             rb.drag = airDrag;
             //rb.gravityScale = rb.gravityScale + gravityMod;
-            fallPause = true;
         }
 
         if (bouncing && rb.velocity.y < 0)
@@ -202,8 +206,7 @@ public class MoveScript : MonoBehaviour
                 Flip(h);
                
             if (canMove)
-            {
-                
+            {                
                 Vector3 targetVelocity = new Vector2(h * 10f * Time.fixedDeltaTime * moveSpd, rb.velocity.y);
                 // And then smoothing it out and applying it to the character
                 rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
@@ -212,11 +215,12 @@ public class MoveScript : MonoBehaviour
         }
 
         if (jumpRequest && isClimb)
-        {
-            StartCoroutine($"FallPause", pauseTime);
+        {            
             bouncing = true;
+            Flip(-transform.localScale.x);
+            rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0))* jumpForce);
+            jumpRequest = false;
             
-                                   
         }
         else if (jumpRequest && isGrounded)
         {
@@ -319,16 +323,13 @@ public class MoveScript : MonoBehaviour
     IEnumerator FallPause()
     {
         fallPause = false;
-        
+
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
         yield return new WaitForSeconds(pauseTime);
-        
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        Flip(-transform.localScale.x);
-        rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0))* jumpForce); 
-        jumpRequest = false;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        isClimb = true;
     }
 
 }
