@@ -30,36 +30,6 @@ Transform:
   m_Father: {fileID: 4536002829500650169}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2089681263
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2089681264}
-  m_Layer: 17
-  m_Name: PointEffectorPlace
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2089681264
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2089681263}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: -0.63, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4536002829500650169}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1218166419899078719
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,7 +163,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4536002828344535091}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.268, y: 0.744, z: 0}
+  m_LocalPosition: {x: 0.268, y: -0.482, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1241046600603954900}
@@ -275,13 +245,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   currentHealth: 3
-  pointEffectorPlace: {fileID: 2089681264}
-  pointEffector: {fileID: 0}
   invulnerableAfterHurt: 1
   invulnerabilityTime: 3
-  gameController: {fileID: 0}
   haloOfInvulnerability: {fileID: 4536002829030208465}
   whoIsEnemy: 1
+  punchForce: 8.44
 --- !u!70 &4536002828507262899
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -478,7 +446,6 @@ Transform:
   - {fileID: 678033780933156521}
   - {fileID: 1241046600603954900}
   - {fileID: 1982951216}
-  - {fileID: 2089681264}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -510,7 +477,7 @@ CapsuleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4536002829500650166}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -531,10 +498,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ad192a0bf2f9448b3bfe1e3198d47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modY: 2
   pauseTime: 0.2
   moveSpd: 30
-  jumpForce: 500
+  jumpForce: 400
   wallChecker: {fileID: 4536002828344535091}
   groundCheckers:
   - {fileID: 4536002828421748001}
@@ -543,23 +509,16 @@ MonoBehaviour:
   isClimb: 0
   normalDrag: 5
   airDrag: 0
-  climbDrag: 50
-  normalJumpForce: 7
-  climbJumpForce: 25
+  climbDrag: 20
   isGrounded: 1
-  canJump: 1
-  jump: 0
   jumpRequest: 0
   jumpPressed: 0
-  isBounce: 0
-  canBounce: 0
   canMove: 1
-  gravityMod: 1
   normalGravity: 1
-  fallMultyplier: 1.4
-  climbMultyplier: 1
+  fallMultyplier: 2.43
+  climbMultyplier: 3.07
   lowJumpMultiplier: 10
-  m_MovementSmoothing: 0.05
+  m_MovementSmoothing: 0.0137
 --- !u!70 &4536002829500650164
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -620,7 +579,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4536002829500650166}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 0
@@ -714,7 +673,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4536002829500650166}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0

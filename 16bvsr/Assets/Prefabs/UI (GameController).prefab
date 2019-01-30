@@ -586,7 +586,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   levelSwitcher: {fileID: 0}
-  lives: 3
+  defaultLivesCount: 3
 --- !u!114 &6028417095654198983
 MonoBehaviour:
   m_ObjectHideFlags: 0
