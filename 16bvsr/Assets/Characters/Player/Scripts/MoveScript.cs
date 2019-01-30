@@ -8,7 +8,6 @@ public class MoveScript : MonoBehaviour
 {
     
     [SerializeField]
-
     private float pauseTime = 4;
     
     [SerializeField]
@@ -30,9 +29,11 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Щуп пола")]
     [SerializeField]
     GameObject [] groundCheckers;
-    
+    [Tooltip("Щуп пола")]
+    [SerializeField]
+    GameObject [] wallCheckers;
     private Rigidbody2D rb;
-
+    [SerializeField]
     private Collider2D col;
 
     private Vector2 direction;
@@ -89,14 +90,17 @@ public class MoveScript : MonoBehaviour
     
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;
 
-    public bool IsWallNear
-    {
-        get
-        {
-            return Physics2D.Linecast(transform.position, wallChecker.transform.position,
-                1 << LayerMask.NameToLayer("Ground"));
-        }
-    }
+//    public bool IsWallNear
+//    {
+//        get
+//        {
+//
+////            return Physics2D.Linecast(transform.position, wallChecker.transform.position,
+////                1 << LayerMask.NameToLayer("Ground"));
+//        }
+//    }
+
+    private bool isWallNear;
 
 
     #region Animator
@@ -116,7 +120,6 @@ public class MoveScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
         fallPause = true;
         animator = GetComponent<Animator>();
     }
@@ -124,13 +127,14 @@ public class MoveScript : MonoBehaviour
     void Update()
     {
         GroundCheck();
+        WallCheck();
         h = Input.GetAxisRaw("Horizontal");
         jumpPressed = Input.GetButton("Jump");
         // Получаем ось прыжка
         if(Input.GetButtonDown("Jump") && (isGrounded || isClimb))
             jumpRequest = true;
      
-        if (IsWallNear && isGrounded == false)
+        if (isWallNear && isGrounded == false)
         {
             if (h == transform.localScale.x && rb.velocity.y < 0)
             {
@@ -147,7 +151,7 @@ public class MoveScript : MonoBehaviour
             
         }
 
-        if (IsWallNear || bouncing)
+        if (isWallNear || bouncing)
             canMove = false;
         else
             canMove = true;
@@ -209,11 +213,10 @@ public class MoveScript : MonoBehaviour
 
         if (jumpRequest && isClimb)
         {
+            StartCoroutine($"FallPause", pauseTime);
             bouncing = true;
-            Flip(-transform.localScale.x);
-            rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0))* jumpForce);
-            jumpRequest = false;
             
+                                   
         }
         else if (jumpRequest && isGrounded)
         {
@@ -283,7 +286,20 @@ public class MoveScript : MonoBehaviour
                 fails++;
         }
 
-        isGrounded = fails < 3;
+        isGrounded = fails < groundCheckers.Length;
+    }
+    
+    private void WallCheck()
+    {
+        int fails = 0;
+        foreach (var checker in wallCheckers)
+        {
+            if (Physics2D.Linecast(transform.position, checker.transform.position,
+                    1 << LayerMask.NameToLayer("Ground")) == false)
+                fails++;
+        }
+
+        isWallNear = fails < wallCheckers.Length;
     }
 
     private void LateUpdate()
@@ -309,6 +325,10 @@ public class MoveScript : MonoBehaviour
         yield return new WaitForSeconds(pauseTime);
         
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        Flip(-transform.localScale.x);
+        rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0))* jumpForce); 
+        jumpRequest = false;
     }
 
 }
