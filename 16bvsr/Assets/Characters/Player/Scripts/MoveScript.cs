@@ -141,7 +141,11 @@ public class MoveScript : MonoBehaviour
             {
                 if(fallPause)
                     StartCoroutine(nameof(FallPause));
-
+                if (Input.GetButton("Jump"))
+                {
+                    StopAllCoroutines();
+                    rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
             }
             else
             {
@@ -195,6 +199,7 @@ public class MoveScript : MonoBehaviour
                 CancelInvoke();
             isIdle = false;
         }
+
     }
 
 
@@ -323,13 +328,13 @@ public class MoveScript : MonoBehaviour
     IEnumerator FallPause()
     {
         fallPause = false;
-
+        isClimb = true;
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
         yield return new WaitForSeconds(pauseTime);
 
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        isClimb = true;
+        
     }
 
 }
