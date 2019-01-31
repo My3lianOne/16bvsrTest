@@ -106,12 +106,11 @@ public class MoveScript : MonoBehaviour
     #region Animator
 
     private Animator animator;
-    private static readonly int JumpInput = Animator.StringToHash("jumpInput");
     private static readonly int Grounded = Animator.StringToHash("IsGrounded");
-    private static readonly int CanJump = Animator.StringToHash("canJump");
-    private static readonly int Running = Animator.StringToHash("Running");
     private static readonly int IsClimb = Animator.StringToHash("IsClimb");
     private static readonly int IsIdle = Animator.StringToHash("IsIdle");
+    private static readonly int XVelocity = Animator.StringToHash("xVelocity");
+    private static readonly int YVelocity = Animator.StringToHash("yVelocity");
 
     #endregion
 
@@ -129,6 +128,13 @@ public class MoveScript : MonoBehaviour
         GroundCheck();
         WallCheck();
         h = Input.GetAxisRaw("Horizontal");
+
+        if (h != 0)
+        {
+            h = 1 * Mathf.Sign(h);
+        }
+
+        
         jumpPressed = Input.GetButton("Jump");
         // Получаем ось прыжка
         if(Input.GetButtonDown("Jump") && (isGrounded || isClimb))
@@ -225,9 +231,8 @@ public class MoveScript : MonoBehaviour
         {            
             bouncing = true;
             Flip(-transform.localScale.x);
-            rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0))* jumpForce);
-            jumpRequest = false;
-            
+            rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0)) * jumpForce);
+            jumpRequest = false;            
         }
         else if (jumpRequest && isGrounded)
         {
@@ -315,9 +320,9 @@ public class MoveScript : MonoBehaviour
 
     private void LateUpdate()
     {
-        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetFloat(YVelocity, rb.velocity.y);
         animator.SetBool(Grounded, isGrounded);        
-        animator.SetInteger(Running, Convert.ToInt32(rb.velocity.x));
+        animator.SetFloat(XVelocity, rb.velocity.x);
         animator.SetBool(IsClimb, isClimb);
         animator.SetBool(IsIdle, isIdle);
     }
