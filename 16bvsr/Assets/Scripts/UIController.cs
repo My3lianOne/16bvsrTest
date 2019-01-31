@@ -15,17 +15,27 @@ public class UIController : MonoBehaviour
     private Toggle [] healthPoints;
     [SerializeField]
     private Text livesCount;
-    
+
+
+    private Animator anim;
     
     // Start is called before the first frame update
     void Start()
     {
+        anim = GetComponent<Animator>();
+         
         gameController = FindObjectOfType<GameController>();
         gameController.LivesCountChanged += OnLivesCountUpdate;
         
+        gameController.PlayerDie += OnPlayerDie;
+        
         playerHealth = FindObjectOfType<HealthController>();
-        playerHealth.HealthChanged += OnHealthUpdate;
-        playerHealth.MaxHealthChanged += OnMaxHealthUpdate;
+        if (playerHealth)
+        {
+            playerHealth.HealthChanged += OnHealthUpdate;
+            playerHealth.MaxHealthChanged += OnMaxHealthUpdate;
+        }
+        
                 
         levelSwitcher = FindObjectOfType<LevelSwitcher>();       
         switchCooldown.maxValue = levelSwitcher.SwitchCooldown;
@@ -35,7 +45,8 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        switchCooldown.value = levelSwitcher.CooldownTimer;
+        if(levelSwitcher)
+            switchCooldown.value = levelSwitcher.CooldownTimer;
     }
     
     void OnHealthUpdate(int count)
@@ -69,4 +80,10 @@ public class UIController : MonoBehaviour
     {
         livesCount.text = count.ToString();
     }
+
+    void OnPlayerDie()
+    {
+        anim.SetTrigger("PlayerDie");
+    }
+    
 }

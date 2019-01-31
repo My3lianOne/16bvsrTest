@@ -124,8 +124,6 @@ public class HealthController : MonoBehaviour
                 StartCoroutine(nameof(SetInvulnerable), invulnerabilityTime);
             }
         }
-
-
     }
 
     /// <summary>

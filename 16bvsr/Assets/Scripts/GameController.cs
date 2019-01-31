@@ -1,13 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
 public class GameController : MonoBehaviour
 {
     
     [SerializeField]
+    private GameObject playerPrefab;
+
     private GameObject player;
+
+
+    public GameObject Player
+    {
+        get
+        {
+            if (player )
+            {                
+                return player;
+            }
+            else
+            {    
+                player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+                player.SetActive(false);
+                return player;
+            }
+        }        
+    }
     
     private HealthController playerHealthController;
     
@@ -21,8 +43,9 @@ public class GameController : MonoBehaviour
     public static GameController instance;
 
     public delegate void LivesCountEvents(int count);
-
-    public event LivesCountEvents LivesCountChanged;
+    public delegate void GameEvents();
+    public event LivesCountEvents LivesCountChanged; 
+    public event GameEvents PlayerDie;
 
     public static List<GameObject> gameObjects;
     
@@ -47,6 +70,9 @@ public class GameController : MonoBehaviour
     /// </summary>
     [SerializeField] private int defaultLivesCount;
 
+    CinemachineVirtualCamera followCam;
+    
+    
     public int LivesCount
     {
         get => lives;
@@ -71,32 +97,27 @@ public class GameController : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+
+
+        SceneManager.sceneLoaded += OnSceneLoad;
     }
 
-
-    private void Start()
+    private void Initialize()
     {
-        LivesCount = defaultLivesCount;
         
-        
-        playerHealthController = player.GetComponentInChildren<HealthController>();
-        playerHealthController.PlayerDieEvent += OnPlayerDie;
-        SceneManager.sceneLoaded += OnSceneLoad;
-        firstCheckPoint = GameObject.FindWithTag("FirstCheckPoint");
         currentCheckPoint = firstCheckPoint;
-        player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);
+        player = Instantiate(playerPrefab, currentCheckPoint.transform.position, Quaternion.identity);
+        followCam = FindObjectOfType<CinemachineVirtualCamera>();
+        followCam.Follow = player.transform;
+        
+        LivesCount = defaultLivesCount;
+
+        SceneManager.sceneLoaded += OnSceneLoad;       
 
         gameObjects = new List<GameObject>();
 
         anim = GetComponent<Animation>();
     }
-
-
-    void Update()
-    {
-        
-    }
-
 
     void OnPlayerDie()
     {
@@ -107,6 +128,7 @@ public class GameController : MonoBehaviour
             // resurrect player
             // restore all objects on scene
             Invoke(nameof(OnGameEnd), 3);
+            PlayerDie?.Invoke();
         }
         else
         {
@@ -140,8 +162,7 @@ public class GameController : MonoBehaviour
 
     void OnSceneLoad(Scene scene, LoadSceneMode loadSceneMode)
     {
-        currentCheckPoint = firstCheckPoint;
-        player.GetComponent<Rigidbody2D>().MovePosition(currentCheckPoint.transform.position);   
+        Initialize();   
     }
 
     void DespawnObjects()
@@ -164,5 +185,50 @@ public class GameController : MonoBehaviour
     {
         anim.Play("OnGameEndFader");
     }
-    
+
+
+    private void OnEnable()
+    {
+        //Initialize();
+    }
+
+    private void GameStart()
+    {
+        InitializeCheckPoints();
+        InitializeCamera();
+        InitializePlayer();
+        InitializeScene();
+    }
+
+    private void InitializeCamera()
+    {
+        followCam = FindObjectOfType<CinemachineVirtualCamera>();
+        if (player)
+        {
+            followCam.Follow = player.transform;
+        }
+        else
+        {
+            Debug.LogError("Player not found by camera");
+        }
+        
+    }
+
+    private void InitializeCheckPoints()
+    {
+        firstCheckPoint = GameObject.FindWithTag("FirstCheckPoint");
+        currentCheckPoint = firstCheckPoint;
+    }
+
+    private void InitializePlayer()
+    {
+        playerHealthController = Player.GetComponentInChildren<HealthController>();
+        playerHealthController.PlayerDieEvent += OnPlayerDie;
+        //playerHealthController.Health = установить хп в зависимости от уровня сложности. 
+    }
+
+    private void InitializeScene()
+    {
+        
+    }
 }
