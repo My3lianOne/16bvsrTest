@@ -106,11 +106,12 @@ public class MoveScript : MonoBehaviour
     #region Animator
 
     private Animator animator;
+    private static readonly int JumpInput = Animator.StringToHash("jumpInput");
     private static readonly int Grounded = Animator.StringToHash("IsGrounded");
+    private static readonly int CanJump = Animator.StringToHash("canJump");
+    private static readonly int Running = Animator.StringToHash("Running");
     private static readonly int IsClimb = Animator.StringToHash("IsClimb");
     private static readonly int IsIdle = Animator.StringToHash("IsIdle");
-    private static readonly int XVelocity = Animator.StringToHash("xVelocity");
-    private static readonly int YVelocity = Animator.StringToHash("yVelocity");
 
     #endregion
 
@@ -320,9 +321,9 @@ public class MoveScript : MonoBehaviour
 
     private void LateUpdate()
     {
-        animator.SetFloat(YVelocity, rb.velocity.y);
+        animator.SetFloat("yVelocity", rb.velocity.y);
         animator.SetBool(Grounded, isGrounded);        
-        animator.SetFloat(XVelocity, rb.velocity.x);
+        animator.SetInteger("xVelocity", Convert.ToInt32(rb.velocity.x));
         animator.SetBool(IsClimb, isClimb);
         animator.SetBool(IsIdle, isIdle);
     }
