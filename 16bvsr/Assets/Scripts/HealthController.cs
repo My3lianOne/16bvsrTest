@@ -113,7 +113,6 @@ public class HealthController : MonoBehaviour
         {
             Health--;
             anim.SetTrigger(Hurt1);
-            StartCoroutine(nameof(PointEffector), 0.1f);
             if (Health <= 0)
             {
                 Die();
@@ -169,7 +168,7 @@ public class HealthController : MonoBehaviour
     {
         Health = MaxHealth;
         IsDie = false;
-        pointEffector.SetActive(false);
+
     }
 
     private void OnDisable()
@@ -186,16 +185,4 @@ public class HealthController : MonoBehaviour
         transform.parent.gameObject.SetActive(false);
     }
     
-    private IEnumerator PointEffector(float time)
-    {
-        if (pointEffector)
-        {
-            pointEffector.transform.position = pointEffectorPlace.position;
-            pointEffector.SetActive(true);
-        }
-                
-        yield return new WaitForSeconds(time);
-        
-        if (pointEffector) pointEffector.SetActive(false);
-    }
 }    

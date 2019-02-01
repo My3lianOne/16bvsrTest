@@ -11,14 +11,10 @@ public class AidKit : CollectableItem
     // Start is called before the first frame update
     public override void OnPick()
     {
-        player.Heal(hp);
+        FindObjectOfType<HealthController>().Heal(hp);
         Deactivate();
     }
 
-    private void OnEnable()
-    {
-        player = FindObjectOfType<HealthController>();
-    }
     
     
 }

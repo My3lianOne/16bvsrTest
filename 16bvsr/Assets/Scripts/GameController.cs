@@ -12,36 +12,31 @@ public class GameController : MonoBehaviour
     private GameObject playerPrefab;
 
     private GameObject player;
-
-
     public GameObject Player
     {
         get
         {
-            if (player )
+            if (player)
             {                
                 return player;
             }
             else
             {    
-                player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-                player.SetActive(false);
+                player = GameObject.FindWithTag("Player");
+                if (player == null)
+                {
+                    player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+                    player.SetActive(false);
+                }                
                 return player;
             }
         }        
-    }
-    
+    }   
     private HealthController playerHealthController;
     
     [SerializeField]
     private LevelSwitcher levelSwitcher;
-
-    private Scene scenes;
-
-    private Scene currentScene;
-    
-    public static GameController instance;
-
+       
     public delegate void LivesCountEvents(int count);
     public delegate void GameEvents();
     public event LivesCountEvents LivesCountChanged; 
@@ -55,24 +50,22 @@ public class GameController : MonoBehaviour
     private GameObject firstCheckPoint;
     
     private GameObject currentCheckPoint;
-
     public GameObject CurrentCheckPoint
     {
         get => currentCheckPoint;
     }
 
-    private Animation anim;
     
-    private int lives;
+    
     
     /// <summary>
     /// Количество жизней
     /// </summary>
     [SerializeField] private int defaultLivesCount;
 
-    CinemachineVirtualCamera followCam;
+    private CinemachineVirtualCamera followCam;
     
-    
+    private int lives;
     public int LivesCount
     {
         get => lives;
@@ -82,8 +75,11 @@ public class GameController : MonoBehaviour
             LivesCountChanged?.Invoke(lives);
         }
     }
-    
 
+    public SceneController sceneController;
+    
+    
+    public static GameController instance;
     void Awake()
     {
         // Реализуем одиночку.
@@ -98,32 +94,26 @@ public class GameController : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
-
         SceneManager.sceneLoaded += OnSceneLoad;
+
+        sceneController = FindObjectOfType<SceneController>();
     }
 
     private void Initialize()
     {
         
-        currentCheckPoint = firstCheckPoint;
-        player = Instantiate(playerPrefab, currentCheckPoint.transform.position, Quaternion.identity);
-        followCam = FindObjectOfType<CinemachineVirtualCamera>();
-        followCam.Follow = player.transform;
-        
-        LivesCount = defaultLivesCount;
-
-        SceneManager.sceneLoaded += OnSceneLoad;       
+        InitScene();
+        LivesCount = defaultLivesCount;  
 
         gameObjects = new List<GameObject>();
 
-        anim = GetComponent<Animation>();
     }
 
     void OnPlayerDie()
     {
-        if (lives > 0)
+        if (LivesCount > 1)
         {
-            lives--;
+            LivesCount--;
             
             // resurrect player
             // restore all objects on scene
@@ -133,9 +123,9 @@ public class GameController : MonoBehaviour
         else
         {
             // GameOver
-            LivesCount = defaultLivesCount;
-            currentCheckPoint = firstCheckPoint;
-            Invoke(nameof(OnGameEnd), 3);
+            GameObject.Destroy(player.gameObject);
+            ReturnToMainMenu();
+            
         }
         
         
@@ -162,7 +152,8 @@ public class GameController : MonoBehaviour
 
     void OnSceneLoad(Scene scene, LoadSceneMode loadSceneMode)
     {
-        Initialize();   
+        if(scene.buildIndex != 0)
+            Initialize();   
     }
 
     void DespawnObjects()
@@ -183,24 +174,10 @@ public class GameController : MonoBehaviour
 
     void OnGameEnd()
     {
-        anim.Play("OnGameEndFader");
+        
     }
 
-
-    private void OnEnable()
-    {
-        //Initialize();
-    }
-
-    private void GameStart()
-    {
-        InitializeCheckPoints();
-        InitializeCamera();
-        InitializePlayer();
-        InitializeScene();
-    }
-
-    private void InitializeCamera()
+    private void InitCamera()
     {
         followCam = FindObjectOfType<CinemachineVirtualCamera>();
         if (player)
@@ -209,26 +186,57 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Player not found by camera");
+            Debug.LogError("Player was not founded by camera");
         }
         
     }
 
-    private void InitializeCheckPoints()
+    private void InitCheckPoints()
     {
         firstCheckPoint = GameObject.FindWithTag("FirstCheckPoint");
         currentCheckPoint = firstCheckPoint;
     }
 
-    private void InitializePlayer()
+    private void InitPlayer()
     {
+        Player.SetActive(true);
+        Player.transform.position = currentCheckPoint.transform.position;
         playerHealthController = Player.GetComponentInChildren<HealthController>();
         playerHealthController.PlayerDieEvent += OnPlayerDie;
         //playerHealthController.Health = установить хп в зависимости от уровня сложности. 
     }
-
-    private void InitializeScene()
+    
+    private void InitLevelSwitcher()
     {
-        
+        levelSwitcher = FindObjectOfType<LevelSwitcher>();
+    }
+
+    private void InitScene()
+    {
+        InitCheckPoints();
+        InitPlayer();
+        InitCamera();
+        InitLevelSwitcher();
+    }
+
+
+    public void ReturnToMainMenu()
+    {
+        sceneController.LoadMainMenu();
+    }
+
+    public void LoadNextlevel()
+    {
+        sceneController.LoadNextScene();
+    }
+
+    public void LoadLevel(int index)
+    {
+        sceneController.LoadScene(index);
+    }
+
+    public void QuitGame()
+    {
+        sceneController.Quit();
     }
 }

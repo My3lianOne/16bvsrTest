@@ -31,26 +31,22 @@ public class LevelSwitcher : MonoBehaviour
     [SerializeField]
     private GameObject realLevel;
     [SerializeField]
-    private GameObject pixelLevel;
-
-    [SerializeField] private GameObject fader;
+    private GameObject pixelLevel;   
 
     private Animation anim;
 
     private bool isSwitching;
 
-    [SerializeField]
-    private Slider slider;
+    public delegate void LevelSwitchEvents();
 
+    public event LevelSwitchEvents LevelSwitched;
     // Start is called before the first frame update
     void Start()
     {
-        anim = GetComponent<Animation>();
-        anim.clip.legacy = true;
-        currentWorld = WORLDS.Real;        
-        
+        currentWorld = WORLDS.Real;
+        cooldownTimer = switchCooldown;
         // Настройки слайдера
-        
+
     }
 
     // Update is called once per frame
@@ -58,9 +54,15 @@ public class LevelSwitcher : MonoBehaviour
     {
         if (currentWorld == WORLDS.Pixel)
         {
+            cooldownTimer = cooldownTimer < 0 ? 0 : cooldownTimer;
             if (cooldownTimer <= 0)
             {
-                anim.Play();   
+                if (!isSwitching)
+                {
+                    LevelSwitched?.Invoke();
+                    isSwitching = true;
+                }               
+                    
             }
             else
             {
@@ -70,9 +72,14 @@ public class LevelSwitcher : MonoBehaviour
                 }                    
             }
                            
-            if(Input.GetButtonDown("Fire1"))
+            if(Input.GetButtonDown("Switch"))
             {
-                anim.Play();   
+                if (!isSwitching)
+                {
+                    LevelSwitched?.Invoke(); 
+                    isSwitching = true;
+                } 
+                    
             }
         }
 
@@ -89,12 +96,10 @@ public class LevelSwitcher : MonoBehaviour
             }
         }
         
-        if (Input.GetButtonDown("Fire1") && canSwitch && !isSwitching)
+        if (Input.GetButtonDown("Switch") && canSwitch && !isSwitching)
         {
-            anim.Play(); 
+                LevelSwitched?.Invoke(); 
         }
-
-        slider.value = cooldownTimer;
     }
 
     public void Switch()
@@ -120,10 +125,5 @@ public class LevelSwitcher : MonoBehaviour
         }
 
         isSwitching = false;
-    }
-    
-    public void DisableFader()
-    {
-        fader.SetActive(false);
-    }
+    }    
 }

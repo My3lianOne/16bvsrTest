@@ -5,25 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    private Animator anim;
-
-    [SerializeField]
-    private GameObject mainMenuUI;
-    [SerializeField]
-    private GameObject gameUI;
-
-    private GameController gameController;
-    
     public static SceneController instance;
-    private void Start()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
-        anim = GetComponent<Animator>();
-
-        gameController = GetComponent<GameController>();
-
-    }
     
     void Awake()
     {
@@ -40,39 +22,24 @@ public class SceneController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void PlayGame()
-    {
-        anim.SetTrigger("NextScene");
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
-
 
     public void LoadNextScene()
     {
-        mainMenuUI.SetActive(false);
-        gameUI.SetActive(true);
-        gameController.enabled = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    public void ReturnToMainMenu()
+    public void LoadMainMenu()
     {
-        SceneManager.LoadScene(0);
-        mainMenuUI.SetActive(true);
+        SceneManager.LoadScene(0);        
     }
 
-    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void LoadScene(int index)
     {
-        anim.SetTrigger("GameStart");
-
+        SceneManager.LoadScene(index);
     }
-    
-    public void OnSceneUnloaded(Scene scene)
+
+    public void Quit()
     {
-        
+        Application.Quit();
     }
 }

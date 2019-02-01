@@ -8,12 +8,12 @@ public class AdditionalMaxHp : CollectableItem
 
     public override void OnPick()
     {
-        player.IncreaseMaxHealth(1);
+        FindObjectOfType<HealthController>().IncreaseMaxHealth(1);
         Deactivate();
     }
 
     private void OnEnable()
     {
-        player = FindObjectOfType<HealthController>();
+        
     }
 }
