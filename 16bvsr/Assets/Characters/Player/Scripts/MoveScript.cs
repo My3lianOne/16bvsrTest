@@ -87,6 +87,10 @@ public class MoveScript : MonoBehaviour
     
     private bool isIdle;
     public bool IsGrounded => isGrounded;
+
+    public float groundRemember;
+    [Range(0, 1f)] [SerializeField]
+    public float groundRememberTime;
     
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;
 
@@ -137,8 +141,8 @@ public class MoveScript : MonoBehaviour
 
         
         jumpPressed = Input.GetButton("Jump");
-        // Получаем ось прыжка
-        if(Input.GetButtonDown("Jump") && (isGrounded || isClimb))
+
+        if(Input.GetButtonDown("Jump"))
             jumpRequest = true;
      
         if (isWallNear && isGrounded == false)
@@ -164,7 +168,6 @@ public class MoveScript : MonoBehaviour
         {
             isClimb = false;
             fallPause = true;
-            
         }
 
         if (isWallNear || bouncing)
@@ -184,12 +187,14 @@ public class MoveScript : MonoBehaviour
             rb.gravityScale = normalGravity;
             rb.drag = normalDrag;
             isClimb = false;
+            groundRemember = groundRememberTime;
         }        
         // если в воздухе
         else
         {
             rb.drag = airDrag;
             //rb.gravityScale = rb.gravityScale + gravityMod;
+            groundRemember -= Time.deltaTime;
         }
 
         if (bouncing && rb.velocity.y < 0)
@@ -235,7 +240,7 @@ public class MoveScript : MonoBehaviour
             rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0)) * jumpForce);
             jumpRequest = false;            
         }
-        else if (jumpRequest && isGrounded)
+        else if (jumpRequest && groundRemember > 0)
         {
             rb.AddForce(Vector2.up * jumpForce);
             jumpRequest = false;

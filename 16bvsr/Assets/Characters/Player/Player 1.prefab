@@ -552,6 +552,8 @@ MonoBehaviour:
   fallMultyplier: 2.43
   climbMultyplier: 3.07
   lowJumpMultiplier: 10
+  groundRemember: 0
+  groundRememberTime: 0.139
   m_MovementSmoothing: 0.0137
 --- !u!70 &4536002829500650164
 CapsuleCollider2D:
