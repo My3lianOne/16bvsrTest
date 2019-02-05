@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 4536002829500650167}
   - component: {fileID: 4536002829500650174}
   - component: {fileID: 1222340025}
-  - component: {fileID: 1222340026}
+  - component: {fileID: 6980300775694099503}
   m_Layer: 17
   m_Name: Player 1
   m_TagString: Player
@@ -483,8 +483,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.4115963, y: 1.3637002}
+  m_Offset: {x: 0, y: 0.054169953}
+  m_Size: {x: 0.4115963, y: 1.2553602}
   m_Direction: 0
 --- !u!114 &4536002829500650165
 MonoBehaviour:
@@ -506,6 +506,9 @@ MonoBehaviour:
   - {fileID: 4536002828421748001}
   - {fileID: 4536002829256799950}
   - {fileID: 4536002829010870811}
+  wallCheckers:
+  - {fileID: 4536002828344535091}
+  col: {fileID: 0}
   isClimb: 0
   normalDrag: 5
   airDrag: 0
@@ -666,20 +669,20 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!60 &1222340026
-PolygonCollider2D:
+--- !u!61 &6980300775694099503
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4536002829500650166}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.54}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -689,16 +692,9 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.0704937, y: 0.7781811}
-      - {x: -0.058021545, y: 0.8050108}
-      - {x: -0.1779747, y: 0.77703}
-      - {x: -0.23885536, y: 0.15568733}
-      - {x: -0.15895653, y: -0.6883583}
-      - {x: 0.1290741, y: -0.68245983}
-      - {x: 0.23021889, y: 0.14100647}
-      - {x: 0.19036865, y: 0.5634184}
+  serializedVersion: 2
+  m_Size: {x: 0.28, y: 0.29}
+  m_EdgeRadius: 0
 --- !u!1 &4954282214714371204
 GameObject:
   m_ObjectHideFlags: 0
