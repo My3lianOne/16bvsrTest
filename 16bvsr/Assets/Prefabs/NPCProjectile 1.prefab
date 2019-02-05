@@ -132,4 +132,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 1
-  moveSpd: 10
+  moveSpd: 100
+  m_MovementSmoothing: 0.05

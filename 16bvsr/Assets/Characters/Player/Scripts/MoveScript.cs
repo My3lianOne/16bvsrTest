@@ -6,16 +6,8 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MoveScript : MonoBehaviour
 {
-    /// <summary>
-    /// Модификатор уменьшения силы прыжка по Y;
-    /// </summary>
-    [SerializeField]
-    [Tooltip("Модификатор уменьшения силы прыжка по Y")]
-    private float modY = 4;
-
     
     [SerializeField]
-
     private float pauseTime = 4;
     
     [SerializeField]
@@ -37,9 +29,11 @@ public class MoveScript : MonoBehaviour
     [Tooltip("Щуп пола")]
     [SerializeField]
     GameObject [] groundCheckers;
-    
+    [Tooltip("Щуп пола")]
+    [SerializeField]
+    GameObject [] wallCheckers;
     private Rigidbody2D rb;
-
+    [SerializeField]
     private Collider2D col;
 
     private Vector2 direction;
@@ -59,53 +53,54 @@ public class MoveScript : MonoBehaviour
     
     [SerializeField]
     [Tooltip("Скорость скольжения по стене (больше - медленнее)")]
-    float climbDrag = 50;
-
-    [SerializeField]
-    [Tooltip("Обычная сила прыжка")]
-    float normalJumpForce = 2;
-
-    [SerializeField]
-    [Tooltip("Сила прыжка при скольжении по стене")]
-    float climbJumpForce = 50;
+    float climbDrag = 50;   
 
     [SerializeField] private bool isGrounded;
-    [SerializeField] private bool canJump;
-
-
-    [SerializeField] private bool jump;
     [SerializeField]
-    private float jumpInput;
+    private bool jumpRequest;
     [SerializeField]
     private bool jumpPressed;
-    [SerializeField]
-    private bool isBounce;
-    float h;
-    [SerializeField]
-    private bool canBounce;
-    [SerializeField]
-    private bool canMove;
+  
+    private float h;    
     
     [SerializeField]
-    [Tooltip("Бустер гравитации при прыжке")]
-    private float gravityMod;
-
+    private bool canMove;
+        
     [SerializeField]
     [Tooltip("Обычная гравитация")]
     private float normalGravity;
+    [SerializeField]
+    [Range(1,10)]
+    private float fallMultyplier = 2.5f;
+    [SerializeField]
+    [Range(0,10)]
+    private float climbMultyplier = 2.5f;
+    [SerializeField]
+    [Range(1,10)]
+    private float lowJumpMultiplier = 2f;
+    private float gravity = 25;
+    private bool fallPause;
 
+    private bool bouncing;
+    
+    private Vector3 m_Velocity = Vector3.zero;
     
     private bool isIdle;
     public bool IsGrounded => isGrounded;
+    
+    [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;
 
-    public bool IsWallNear
-    {
-        get
-        {
-            return Physics2D.Linecast(transform.position, wallChecker.transform.position,
-                1 << LayerMask.NameToLayer("Ground"));
-        }
-    }
+//    public bool IsWallNear
+//    {
+//        get
+//        {
+//
+////            return Physics2D.Linecast(transform.position, wallChecker.transform.position,
+////                1 << LayerMask.NameToLayer("Ground"));
+//        }
+//    }
+
+    private bool isWallNear;
 
 
     #region Animator
@@ -125,79 +120,63 @@ public class MoveScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
         fallPause = true;
         animator = GetComponent<Animator>();
     }
     
     void Update()
     {
+        GroundCheck();
+        WallCheck();
         h = Input.GetAxisRaw("Horizontal");
+
+        if (h != 0)
+        {
+            h = 1 * Mathf.Sign(h);
+        }
+
+        
         jumpPressed = Input.GetButton("Jump");
         // Получаем ось прыжка
-        jumpInput = Input.GetAxis("Jump");
-
-        GroundCheck();
-        
-        
-        // если нажата кнопка прыжка, можно прыгать и ввод по оси не превышает 1
-        if ( jumpPressed && canBounce && jumpInput < 1 )
+        if(Input.GetButtonDown("Jump") && (isGrounded || isClimb))
+            jumpRequest = true;
+     
+        if (isWallNear && isGrounded == false)
         {
-            isBounce = true;
-        }
-        else if ( jumpPressed && canJump && jumpInput < 1 )
-        {
-            jump = true;
-        }               
-        else
-        {
-            canJump = false;
-            jump = false;
-            canBounce = false;
-            isBounce = false;
-        }
-
-        if ( isGrounded && jumpInput == 0 )
-        {
-            canJump = true;            
-        }
-
-
-        if (IsWallNear == true && isGrounded == false)
-        {
-            if (h == transform.localScale.x && !jump)
+            
+            if (h == transform.localScale.x && rb.velocity.y <= 0)
             {
-                
-                if (fallPause)
-                {
+                if(fallPause)
                     StartCoroutine(nameof(FallPause));
+                if (Input.GetButton("Jump"))
+                {
+                    StopAllCoroutines();
+                    rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 }
-                isClimb = true;
             }
             else
             {
                 isClimb = false;
+                fallPause = true;
             }
         }
         else
         {
             isClimb = false;
+            fallPause = true;
             
         }
 
-        if (IsWallNear || canBounce)
+        if (isWallNear || bouncing)
             canMove = false;
         else
             canMove = true;
         
         // Если сползаем по стене
         if (isClimb)
-        {
-            
-            jumpForce = climbJumpForce;
+        {            
             rb.drag = climbDrag;
-            canBounce = true;
-            rb.gravityScale = 20;
+            rb.gravityScale = climbMultyplier;
         }
         // если находимся на земле
         else if (isGrounded)
@@ -205,67 +184,79 @@ public class MoveScript : MonoBehaviour
             rb.gravityScale = normalGravity;
             rb.drag = normalDrag;
             isClimb = false;
-            jumpForce = normalJumpForce;
-            canBounce = false;
         }        
         // если в воздухе
         else
         {
             rb.drag = airDrag;
-            jumpForce = normalJumpForce;
-            rb.gravityScale = rb.gravityScale + gravityMod;
-            fallPause = true;
-        } 
-        
-        if (canBounce && Input.GetButtonDown("Jump"))
-        {
-            Flip(-transform.localScale.x);
-            StopAllCoroutines();
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-            
+            //rb.gravityScale = rb.gravityScale + gravityMod;
         }
 
-        if (h == 0 && !isClimb && !isBounce && isGrounded) 
+        if (bouncing && rb.velocity.y < 0)
+            bouncing = false;
+        
+        if (h == 0 && !isClimb && !bouncing && isGrounded) 
         {
             if(!IsInvoking())
                 Invoke(nameof(SetIdleState), 3);
         }
         else
         {
+            if(IsInvoking())
+                CancelInvoke();
             isIdle = false;
         }
+
     }
 
 
-    private bool fallPause;
     private void FixedUpdate()
     {
         if (h != 0)
         {    
-            if(!canBounce)
+            if(!bouncing)
                 Flip(h);
+               
             if (canMove)
-            {
-                rb.AddForce(new Vector2(h, 0) * moveSpd);                                
+            {                
+                Vector3 targetVelocity = new Vector2(h * 10f * Time.fixedDeltaTime * moveSpd, rb.velocity.y);
+                // And then smoothing it out and applying it to the character
+                rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
             }
                 
         }
-                            
-        Vector2 direction = Vector2.zero;
+        else if (!bouncing)
+            rb.velocity = new Vector2(0, rb.velocity.y);
 
-        
-        if (isBounce)
+        if (jumpRequest && isClimb)
+        {            
+            bouncing = true;
+            Flip(-transform.localScale.x);
+            rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0)) * jumpForce);
+            jumpRequest = false;            
+        }
+        else if (jumpRequest && isGrounded)
         {
-            direction = new Vector2(transform.localScale.x * jumpForce / modY, jumpForce * (1 - jumpInput) )  ;
-            //rb.velocity = new Vector2(-transform.localScale.x, modY)* jumpForce;
-            rb.AddForce(direction, ForceMode2D.Force);
-                              
+            rb.AddForce(Vector2.up * jumpForce);
+            jumpRequest = false;
         }
-        else if (jump){
-            direction = transform.up * jumpForce * (1 - jumpInput);   
-            rb.AddForce(direction, ForceMode2D.Force);
+        
+
+        if (rb.velocity.y < 0 && isClimb)
+        {
+            rb.gravityScale = normalGravity;
         }
-        rb.velocity = Vector2.zero;
+        else if (rb.velocity.y < 0)
+        {
+            rb.gravityScale = fallMultyplier;
+        } else if (rb.velocity.y > 0 && !jumpPressed)
+        {
+            rb.gravityScale = lowJumpMultiplier;
+        }
+        else
+        {
+            rb.gravityScale = normalGravity;
+        }        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -312,15 +303,27 @@ public class MoveScript : MonoBehaviour
                 fails++;
         }
 
-        isGrounded = fails < 3;
+        isGrounded = fails < groundCheckers.Length;
+    }
+    
+    private void WallCheck()
+    {
+        int fails = 0;
+        foreach (var checker in wallCheckers)
+        {
+            if (Physics2D.Linecast(transform.position, checker.transform.position,
+                    1 << LayerMask.NameToLayer("Ground")) == false)
+                fails++;
+        }
+
+        isWallNear = fails < wallCheckers.Length;
     }
 
     private void LateUpdate()
     {
-        animator.SetFloat(JumpInput, jumpInput);
-        animator.SetBool(Grounded, isGrounded);
-        animator.SetBool(CanJump, canJump);
-        animator.SetInteger(Running, Convert.ToInt32(h));
+        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetBool(Grounded, isGrounded);        
+        animator.SetInteger("xVelocity", Convert.ToInt32(rb.velocity.x));
         animator.SetBool(IsClimb, isClimb);
         animator.SetBool(IsIdle, isIdle);
     }
@@ -333,11 +336,13 @@ public class MoveScript : MonoBehaviour
     IEnumerator FallPause()
     {
         fallPause = false;
-        
+        isClimb = true;
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
         yield return new WaitForSeconds(pauseTime);
-        
+
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        
     }
+
 }

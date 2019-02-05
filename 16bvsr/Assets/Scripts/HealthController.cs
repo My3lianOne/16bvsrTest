@@ -9,9 +9,7 @@ public class HealthController : MonoBehaviour
 {
     public delegate void PlayerDie();
 
-    public event PlayerDie PlayerDieEvent;
-    
-    
+    public event PlayerDie PlayerDieEvent;        
     
     [Tooltip("Максимальные HP")]
     [SerializeField]
@@ -41,10 +39,7 @@ public class HealthController : MonoBehaviour
             currentHealth = value;
             HealthChanged?.Invoke(currentHealth);
         }
-    }
-
-    [SerializeField] private Transform pointEffectorPlace;
-    [SerializeField] private GameObject pointEffector;
+    }  
     
     /// <summary>
     /// Неуязвимый?
@@ -58,8 +53,7 @@ public class HealthController : MonoBehaviour
     [Tooltip("Время неуязвимости")]
     [SerializeField]
     private float invulnerabilityTime;
-
-    [SerializeField] private GameObject gameController;
+   
     // Временно.
     [SerializeField]
     private GameObject haloOfInvulnerability;        
@@ -79,9 +73,13 @@ public class HealthController : MonoBehaviour
     public event HealthState HealthChanged;
     public event HealthState MaxHealthChanged;
 
-
+    private Rigidbody2D rb;
     private Animator anim;
     private static readonly int Hurt1 = Animator.StringToHash("Hurt");
+
+    [Range(0, 10f)]
+    [SerializeField]
+    private float punchForce = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -89,13 +87,15 @@ public class HealthController : MonoBehaviour
         anim = GetComponentInParent<Animator>();
         Health = MaxHealth;
         IsDie = false;
-        gameController = GameObject.FindWithTag("GameController");               
+        rb = GetComponentInParent<Rigidbody2D>();
     }
+
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-            if(other.CompareTag("Enemy")) 
-                Hurt();
+        if(other.CompareTag("Enemy")) 
+            Hurt();
     }
     
     private void OnTriggerExit2D(Collider2D other)
@@ -113,6 +113,8 @@ public class HealthController : MonoBehaviour
         {
             Health--;
             anim.SetTrigger(Hurt1);
+            rb.AddForce(new Vector2(-transform.localScale.x, 1) * punchForce, ForceMode2D.Impulse);
+            
             if (Health <= 0)
             {
                 Die();
@@ -123,6 +125,8 @@ public class HealthController : MonoBehaviour
                 StartCoroutine(nameof(SetInvulnerable), invulnerabilityTime);
             }
         }
+
+
     }
 
     /// <summary>
@@ -168,7 +172,6 @@ public class HealthController : MonoBehaviour
     {
         Health = MaxHealth;
         IsDie = false;
-
     }
 
     private void OnDisable()
@@ -183,6 +186,5 @@ public class HealthController : MonoBehaviour
         IsDie = true; 
         PlayerDieEvent?.Invoke();    
         transform.parent.gameObject.SetActive(false);
-    }
-    
+    }    
 }    

@@ -8,6 +8,8 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float lifetime;
     [SerializeField]
     private float moveSpd;
+    private Vector3 m_Velocity = Vector3.zero;
+    [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;
     // Start is called before the first frame update
     void Awake()
     {
@@ -28,7 +30,9 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        rb.velocity = Vector2.right * transform.localScale.x * moveSpd;        
+        Vector3 targetVelocity = new Vector2(transform.localScale.x * 10f * Time.fixedDeltaTime * moveSpd, rb.velocity.y);
+
+        rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);     
     }
 
     private void OnTriggerEnter2D(Collider2D other)
