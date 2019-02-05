@@ -11,6 +11,7 @@ TagManager:
   - Enemy
   - FirstCheckPoint
   - CollectableItem
+  - ContinueButton
   layers:
   - Default
   - TransparentFX

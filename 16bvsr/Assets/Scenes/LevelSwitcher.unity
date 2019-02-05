@@ -510,8 +510,6 @@ MonoBehaviour:
   canSwitch: 0
   realLevel: {fileID: 1777903002}
   pixelLevel: {fileID: 984622231}
-  fader: {fileID: 0}
-  slider: {fileID: 0}
 --- !u!1 &733600783
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
+  m_VerticalAxis: UIVertical
   m_SubmitButton: Submit
   m_CancelButton: Cancel
   m_InputActionsPerSecond: 10

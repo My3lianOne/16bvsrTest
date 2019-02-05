@@ -139,6 +139,36 @@ Transform:
   m_Father: {fileID: 4536002829500650169}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4291528118093061257
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 673908494741087601}
+  m_Layer: 10
+  m_Name: WallChecker (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &673908494741087601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4291528118093061257}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.2679999, y: 0.876, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1241046600603954900}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4536002828344535091
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,6 +538,7 @@ MonoBehaviour:
   - {fileID: 4536002829010870811}
   wallCheckers:
   - {fileID: 4536002828344535091}
+  - {fileID: 4291528118093061257}
   col: {fileID: 0}
   isClimb: 0
   normalDrag: 5
@@ -726,6 +757,7 @@ Transform:
   - {fileID: 4536002828421748006}
   - {fileID: 4536002829256799951}
   - {fileID: 4536002829010870808}
+  - {fileID: 673908494741087601}
   m_Father: {fileID: 4536002829500650169}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

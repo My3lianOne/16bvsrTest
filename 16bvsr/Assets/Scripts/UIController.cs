@@ -3,6 +3,7 @@ using System.Collections;
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,6 +32,8 @@ public class UIController : MonoBehaviour
     private Animator anim;
     
     private Action action;
+
+    private EventSystem eventSystem;
     
     // Start is called before the first frame update
     void Start()
@@ -48,7 +51,9 @@ public class UIController : MonoBehaviour
         else
         {
             Debug.LogError("GameController not found");
-        }                        
+        }
+
+        eventSystem = FindObjectOfType<EventSystem>();
     }
 
     // Update is called once per frame
@@ -121,12 +126,14 @@ public class UIController : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        eventSystem = FindObjectOfType<EventSystem>();
         if (scene.buildIndex == 0)
         {
             mainMenuUI.SetActive(true);
             gameUI.SetActive(false);
             pauseUI.SetActive(false);
             gameOverUI.SetActive(false);
+            eventSystem.SetSelectedGameObject(mainMenuUI.GetComponentInChildren<Button>().gameObject);
         }
         else
         {
@@ -156,9 +163,11 @@ public class UIController : MonoBehaviour
             else
             {
                 Debug.LogError("LevelSwitcher not found");
-            }            
+            }
+            
+            
         }
-
+        
         anim.SetTrigger("FadeOut");
         onLoading = false;
     }
@@ -177,6 +186,7 @@ public class UIController : MonoBehaviour
         gameOverUI.SetActive(true);  
         paused = true;
         Time.timeScale = 0;
+        eventSystem.SetSelectedGameObject(gameOverUI.GetComponentInChildren<Button>().gameObject);
     }
     
     #region AnimationEvents    
@@ -213,6 +223,7 @@ public class UIController : MonoBehaviour
         paused = true;
         Time.timeScale = 0;
         pauseUI.SetActive(true);
+        eventSystem.SetSelectedGameObject(pauseUI.GetComponentInChildren<Button>().gameObject);
     }
 
     public void SetUnpause()
