@@ -230,8 +230,8 @@ public class MoveScript : MonoBehaviour
             }
                 
         }
-        else if (!bouncing)
-            rb.velocity = new Vector2(0, rb.velocity.y);
+//        else if (!bouncing)
+//            rb.velocity = new Vector2(0, rb.velocity.y);
 
         if (jumpRequest && isClimb)
         {            

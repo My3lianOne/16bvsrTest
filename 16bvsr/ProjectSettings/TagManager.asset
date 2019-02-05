@@ -12,6 +12,7 @@ TagManager:
   - FirstCheckPoint
   - CollectableItem
   - ContinueButton
+  - EndPoint
   layers:
   - Default
   - TransparentFX

@@ -8,8 +8,6 @@ using UnityEngine.Experimental.PlayerLoop;
 
 public class GameController : MonoBehaviour
 {
-
-
     private Action action;
     
     [SerializeField]
@@ -25,17 +23,17 @@ public class GameController : MonoBehaviour
                 return player;
             }
             else
-            {    
+            {
                 player = GameObject.FindWithTag("Player");
                 if (player == null)
                 {
                     player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
                     player.SetActive(false);
-                }                
+                }
                 return player;
             }
-        }        
-    }   
+        }
+    }
     private HealthController playerHealthController;
     
     [SerializeField]
@@ -45,8 +43,8 @@ public class GameController : MonoBehaviour
     public delegate void GameEvents();
     public event LivesCountEvents LivesCountChanged; 
     public event GameEvents PlayerDie;
-
     public event GameEvents GameEnded;
+    public event GameEvents LevelEnded;
 
     public static List<GameObject> gameObjects;
     
@@ -61,8 +59,8 @@ public class GameController : MonoBehaviour
         get => currentCheckPoint;
     }
 
-    
-    
+
+    private GameObject levelEndPoint;
     
     /// <summary>
     /// Количество жизней
@@ -106,11 +104,10 @@ public class GameController : MonoBehaviour
     }
 
     private void Initialize()
-    {
-        
+    {        
         InitScene();
         LivesCount = defaultLivesCount;  
-
+        levelEndPoint = GameObject.FindWithTag("EndPoint");
         gameObjects = new List<GameObject>();
 
     }
@@ -255,5 +252,8 @@ public class GameController : MonoBehaviour
         }
     }
 
-
+    public void LevelEnd()
+    {
+        LevelEnded?.Invoke();
+    }
 }

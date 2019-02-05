@@ -47,6 +47,7 @@ public class UIController : MonoBehaviour
             gameController.LivesCountChanged += OnLivesCountUpdate;        
             gameController.PlayerDie += OnPlayerDie;
             gameController.GameEnded += OnGameEnded;
+            gameController.LevelEnded += OnLevelEnded;
         }
         else
         {
@@ -163,9 +164,7 @@ public class UIController : MonoBehaviour
             else
             {
                 Debug.LogError("LevelSwitcher not found");
-            }
-            
-            
+            }                        
         }
         
         anim.SetTrigger("FadeOut");
@@ -241,4 +240,12 @@ public class UIController : MonoBehaviour
         onLoading = true;
     }
     #endregion
+
+
+    void OnLevelEnded()
+    {
+        action = gameController.LoadNextlevel;
+        anim.SetTrigger("FadeIn");
+        onLoading = true;
+    }
 }
