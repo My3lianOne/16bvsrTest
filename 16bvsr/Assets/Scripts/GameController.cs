@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cinemachine;
+using UnityEngine.Experimental.PlayerLoop;
 
 public class GameController : MonoBehaviour
 {
+
+
+    private Action action;
     
     [SerializeField]
     private GameObject playerPrefab;
@@ -41,6 +45,8 @@ public class GameController : MonoBehaviour
     public delegate void GameEvents();
     public event LivesCountEvents LivesCountChanged; 
     public event GameEvents PlayerDie;
+
+    public event GameEvents GameEnded;
 
     public static List<GameObject> gameObjects;
     
@@ -117,15 +123,11 @@ public class GameController : MonoBehaviour
             
             // resurrect player
             // restore all objects on scene
-            Invoke(nameof(OnGameEnd), 3);
             PlayerDie?.Invoke();
         }
         else
-        {
-            // GameOver
-            GameObject.Destroy(player.gameObject);
-            ReturnToMainMenu();
-            
+        {            
+            GameEnded?.Invoke();            
         }
         
         
@@ -166,7 +168,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void ReloadGame()
+    public void ReloadGame()
     {
         DespawnObjects();
         ResurrectPlayer();
@@ -226,9 +228,9 @@ public class GameController : MonoBehaviour
     }
 
     public void LoadNextlevel()
-    {
-        sceneController.LoadNextScene();
-    }
+     {
+         sceneController.LoadNextScene();
+     }
 
     public void LoadLevel(int index)
     {
@@ -239,4 +241,19 @@ public class GameController : MonoBehaviour
     {
         sceneController.Quit();
     }
+
+    public void ReloadScene()
+    {
+        sceneController.ReloadScene();
+    }
+
+    public void SwitchLevel()
+    {
+        if (levelSwitcher)
+        {
+            levelSwitcher.Switch();
+        }
+    }
+
+
 }

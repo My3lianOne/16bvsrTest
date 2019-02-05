@@ -24,7 +24,7 @@ public class SceneController : MonoBehaviour
 
 
     public void LoadNextScene()
-    {
+    {                
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
@@ -41,5 +41,10 @@ public class SceneController : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

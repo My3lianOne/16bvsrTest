@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,7 +24,13 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private GameObject gameUI;
 
+    [SerializeField] private GameObject pauseUI;
+    [SerializeField] private GameObject gameOverUI;
+    
+
     private Animator anim;
+    
+    private Action action;
     
     // Start is called before the first frame update
     void Start()
@@ -35,14 +43,12 @@ public class UIController : MonoBehaviour
         {
             gameController.LivesCountChanged += OnLivesCountUpdate;        
             gameController.PlayerDie += OnPlayerDie;
+            gameController.GameEnded += OnGameEnded;
         }
         else
         {
             Debug.LogError("GameController not found");
-        }
-        
-        
-        
+        }                        
     }
 
     // Update is called once per frame
@@ -50,6 +56,28 @@ public class UIController : MonoBehaviour
     {
         if(levelSwitcher)
             switchCooldown.value = levelSwitcher.CooldownTimer;
+    }    
+
+    private bool paused = false;
+    private bool onLoading = false;
+    void Update()
+    {
+        if (Input.GetButtonDown("Cancel"))
+        {
+            if (SceneManager.GetActiveScene().buildIndex != 0)
+            {
+                if (paused && !onLoading)
+                {
+                    SetUnpause();
+                
+                }
+                else if(!onLoading )
+                {
+                    SetPause();
+                }
+            }
+
+        }
     }
     
     void OnHealthUpdate(int count)
@@ -86,20 +114,10 @@ public class UIController : MonoBehaviour
 
     void OnPlayerDie()
     {
-        anim.SetTrigger("PlayerDie");
-    }
-    
-    
-    public void PlayGame()
-    {
-        anim.SetTrigger("NextScene");
-        //mainMenuUI.SetActive(true);
-    }
-    
-    public void QuitGame()
-    {
-        gameController.QuitGame();
-    }
+        action = gameController.ReloadGame;
+        anim.SetTrigger("FadeIn");
+        anim.SetTrigger("FadeOut");
+    }   
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -107,50 +125,109 @@ public class UIController : MonoBehaviour
         {
             mainMenuUI.SetActive(true);
             gameUI.SetActive(false);
+            pauseUI.SetActive(false);
+            gameOverUI.SetActive(false);
         }
         else
         {
             mainMenuUI.SetActive(false);
+            pauseUI.SetActive(false);
+            gameOverUI.SetActive(false);
             gameUI.SetActive(true);
-            anim.SetTrigger("SceneLoaded");
-        }
                         
-        playerHealth = FindObjectOfType<HealthController>();
-        if (playerHealth)
-        {
-            playerHealth.HealthChanged += OnHealthUpdate;
-            playerHealth.MaxHealthChanged += OnMaxHealthUpdate;
-        }
-        else
-        {
-            Debug.LogError("Player health controller not found");
-        }
+            playerHealth = FindObjectOfType<HealthController>();
+            if (playerHealth)
+            {
+                playerHealth.HealthChanged += OnHealthUpdate;
+                playerHealth.MaxHealthChanged += OnMaxHealthUpdate;
+            }
+            else
+            {
+                Debug.LogError("Player health controller not found");
+            }
         
-        levelSwitcher = FindObjectOfType<LevelSwitcher>();
-        if (levelSwitcher)
-        {
-            levelSwitcher.LevelSwitched += OnLevelSwitched;
-            switchCooldown.maxValue = levelSwitcher.SwitchCooldown;
-            switchCooldown.value = levelSwitcher.SwitchCooldown;
+            levelSwitcher = FindObjectOfType<LevelSwitcher>();
+            if (levelSwitcher)
+            {
+                levelSwitcher.LevelSwitched += OnLevelSwitched;
+                switchCooldown.maxValue = levelSwitcher.SwitchCooldown;
+                switchCooldown.value = levelSwitcher.SwitchCooldown;
+            }
+            else
+            {
+                Debug.LogError("LevelSwitcher not found");
+            }            
         }
-        else
-        {
-            Debug.LogError("LevelSwitcher not found");
-        }
+
+        anim.SetTrigger("FadeOut");
+        onLoading = false;
     }
 
     public void OnLevelSwitched()
     {
-        anim.SetTrigger("LevelSwitched");
+        action = gameController.SwitchLevel;
+        anim.SetTrigger("SwitchLevel");
     }
 
 
-    public void SwitchLevel()
+
+
+    public void OnGameEnded()
     {
-        if (levelSwitcher)
-        {
-            levelSwitcher.Switch();
-        }
+        gameOverUI.SetActive(true);  
+        paused = true;
+        Time.timeScale = 0;
     }
     
+    #region AnimationEvents    
+    void AnimatorAction()
+    {
+        action?.Invoke();
+    }
+
+    #endregion
+
+    #region ButtonsMethods
+    public void QuitGame()
+    {
+        gameController.QuitGame();
+    }
+    
+    public void PlayGame()
+    {
+        action = gameController.LoadNextlevel;
+        anim.SetTrigger("FadeIn");
+        onLoading = true;
+    }
+    
+    public void ReturnToMainMenu()
+    {
+        action = gameController.ReturnToMainMenu;
+        SetUnpause();
+        anim.SetTrigger("FadeIn");
+        onLoading = true;
+    }
+    
+    public void SetPause()
+    {
+        paused = true;
+        Time.timeScale = 0;
+        pauseUI.SetActive(true);
+    }
+
+    public void SetUnpause()
+    {
+        paused = false;
+        Time.timeScale = 1f;
+        pauseUI.SetActive(false);
+    }
+
+    public void ReloadGame()
+    {
+        action = gameController.ReloadScene;
+        SetUnpause();
+        anim.SetTrigger("FadeIn");
+        onLoading = true;
+    }
+    #endregion
 }
