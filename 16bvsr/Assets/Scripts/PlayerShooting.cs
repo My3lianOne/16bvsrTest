@@ -20,7 +20,6 @@ public class PlayerShooting : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
         anim = GetComponent<Animator>();
         
         for (int i = 0; i < poolCapacity; i++)
@@ -29,9 +28,7 @@ public class PlayerShooting : MonoBehaviour
             obj.SetActive(false);
             pool.Add(obj);
         }
-
         moveScript = GetComponent<MoveScript>();
-
     }
 
     // Update is called once per frame
@@ -43,9 +40,7 @@ public class PlayerShooting : MonoBehaviour
             SpawnProjectile();
         }
     }
-    
-    
-
+        
     public GameObject SpawnProjectile()
     {
         foreach (var proj in pool)
@@ -67,5 +62,5 @@ public class PlayerShooting : MonoBehaviour
             }
         }
         return null;
-    }  
+    }
 }
