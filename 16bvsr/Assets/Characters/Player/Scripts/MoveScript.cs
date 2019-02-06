@@ -94,6 +94,7 @@ public class MoveScript : MonoBehaviour
     
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;
 
+    private HealthController healthController;
 //    public bool IsWallNear
 //    {
 //        get
@@ -126,6 +127,7 @@ public class MoveScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         fallPause = true;
         animator = GetComponent<Animator>();
+        healthController = GetComponentInChildren<HealthController>();
     }
     
     void Update()
@@ -350,4 +352,9 @@ public class MoveScript : MonoBehaviour
         
     }
 
+
+    public void Die()
+    {
+        healthController.Die();
+    }
 }

@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class HealthController : MonoBehaviour
 {
     public delegate void PlayerDie();
+    [SerializeField]
+    private ParticleSystem particleSystem;
 
     public event PlayerDie PlayerDieEvent;        
     
@@ -113,11 +115,12 @@ public class HealthController : MonoBehaviour
         {
             Health--;
             anim.SetTrigger(Hurt1);
+            rb.velocity = Vector2.zero;
             rb.AddForce(new Vector2(-transform.localScale.x, 1) * punchForce, ForceMode2D.Impulse);
             
             if (Health <= 0)
             {
-                Die();
+                anim.SetTrigger("Die");
                 return;
             }
             if (invulnerableAfterHurt)
@@ -181,8 +184,8 @@ public class HealthController : MonoBehaviour
     }
 
 
-    private void Die()
-    {
+    public void Die()
+    {        
         IsDie = true; 
         PlayerDieEvent?.Invoke();    
         transform.parent.gameObject.SetActive(false);
