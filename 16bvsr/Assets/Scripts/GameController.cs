@@ -36,6 +36,8 @@ public class GameController : MonoBehaviour
     }
     private HealthController playerHealthController;
     
+    private ItemsManager itemManager;
+    
     [SerializeField]
     private LevelSwitcher levelSwitcher;
        
@@ -101,6 +103,7 @@ public class GameController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoad;
 
         sceneController = FindObjectOfType<SceneController>();
+        itemManager = FindObjectOfType<ItemsManager>();
     }
 
     private void Initialize()
@@ -203,7 +206,7 @@ public class GameController : MonoBehaviour
         playerHealthController = Player.GetComponentInChildren<HealthController>();
         playerHealthController.PlayerDieEvent += OnPlayerDie;
         //playerHealthController.Health = установить хп в зависимости от уровня сложности. 
-    }
+    }           
     
     private void InitLevelSwitcher()
     {
@@ -216,6 +219,7 @@ public class GameController : MonoBehaviour
         InitPlayer();
         InitCamera();
         InitLevelSwitcher();
+        InitItems();
     }
 
 
@@ -255,5 +259,10 @@ public class GameController : MonoBehaviour
     public void LevelEnd()
     {
         LevelEnded?.Invoke();
+    }
+
+    void InitItems()
+    {
+        itemManager.FillPull();
     }
 }

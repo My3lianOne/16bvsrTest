@@ -92,6 +92,9 @@ public class MoveScript : MonoBehaviour
     [Range(0, 1f)] [SerializeField]
     public float groundRememberTime;
     
+    public float climbRemember;
+    [Range(0, 1f)] [SerializeField]
+    public float climbRememberTime;
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;
 
     private HealthController healthController;
@@ -182,6 +185,7 @@ public class MoveScript : MonoBehaviour
         {            
             rb.drag = climbDrag;
             rb.gravityScale = climbMultyplier;
+            climbRemember = climbRememberTime;
         }
         // если находимся на земле
         else if (isGrounded)
@@ -190,6 +194,7 @@ public class MoveScript : MonoBehaviour
             rb.drag = normalDrag;
             isClimb = false;
             groundRemember = groundRememberTime;
+            climbRemember = 0;
         }        
         // если в воздухе
         else
@@ -197,6 +202,7 @@ public class MoveScript : MonoBehaviour
             rb.drag = airDrag;
             //rb.gravityScale = rb.gravityScale + gravityMod;
             groundRemember -= Time.deltaTime;
+            climbRemember -= Time.deltaTime;
         }
 
         if (bouncing && rb.velocity.y < 0)
@@ -215,8 +221,15 @@ public class MoveScript : MonoBehaviour
         }
 
     }
+    [Range(0, 1f)]
+    [SerializeField] private float fCutJumpHeight;
 
-
+    [Range(0, 1f)]
+    [SerializeField] float horizontalDumpingStopping;
+    [Range(0, 1f)]
+    [SerializeField] float horizontalDumpingTurning;
+    [Range(0, 1f)]
+    [SerializeField] float horizontalDumpingBasic;
     private void FixedUpdate()
     {
         if (h != 0)
@@ -226,44 +239,73 @@ public class MoveScript : MonoBehaviour
                
             if (canMove)
             {                
-                Vector3 targetVelocity = new Vector2(h * 10f * Time.fixedDeltaTime * moveSpd, rb.velocity.y);
+                /*Vector3 targetVelocity = new Vector2(h * 10f * Time.fixedDeltaTime * moveSpd, rb.velocity.y);
                 // And then smoothing it out and applying it to the character
-                rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
+                rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);*/
+
+                float horizontalVelocity = rb.velocity.x;
+                horizontalVelocity += h;
+
+                if (Mathf.Abs(h) < 0.01f)
+                {
+                    horizontalVelocity *= Mathf.Pow(1f - horizontalDumpingStopping, Time.deltaTime * 10f);
+                }
+                else if (Mathf.Sign(h) != Mathf.Sign(horizontalVelocity))
+                {
+                    horizontalVelocity *= Mathf.Pow(1f - horizontalDumpingTurning, Time.deltaTime * 10f);
+                }
+                else
+                {
+                    horizontalVelocity *= Mathf.Pow(1f - horizontalDumpingBasic, Time.deltaTime * 10f);
+                }
+                
+                rb.velocity = new Vector2(horizontalVelocity, rb.velocity.y);
             }
                 
         }
-        else if (!bouncing && (h == 0 && !isGrounded))
-            rb.velocity = new Vector2(0, rb.velocity.y);
+//        else if (!bouncing && (h == 0 && !isGrounded))
+//            rb.velocity = new Vector2(0, rb.velocity.y);
 
-        if (jumpRequest && isClimb)
+        if (Input.GetButtonUp("Jump"))
+        {
+            if (rb.velocity.y > 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * fCutJumpHeight);
+            }
+        }
+        
+        if (jumpRequest && (climbRemember > 0))
         {            
             bouncing = true;
             Flip(-transform.localScale.x);
-            rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0)) * jumpForce);
+            rb.velocity = (Vector2.up + new Vector2(transform.localScale.x, 1)) * (jumpForce*0.7f);
+            //rb.AddForce((Vector2.up + new Vector2(transform.localScale.x, 0)) * jumpForce);
             jumpRequest = false;            
         }
         else if (jumpRequest && groundRemember > 0)
         {
-            rb.AddForce(Vector2.up * jumpForce);
+//          rb.AddForce(Vector2.up * jumpForce);
+//            
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpRequest = false;
         }
         
-
-        if (rb.velocity.y < 0 && isClimb)
-        {
-            rb.gravityScale = normalGravity;
-        }
-        else if (rb.velocity.y < 0)
-        {
-            rb.gravityScale = fallMultyplier;
-        } else if (rb.velocity.y > 0 && !jumpPressed)
-        {
-            rb.gravityScale = lowJumpMultiplier;
-        }
-        else
-        {
-            rb.gravityScale = normalGravity;
-        }        
+//
+//        if (rb.velocity.y < 0 && isClimb)
+//        {
+//            rb.gravityScale = normalGravity;
+//        }
+//        else if (rb.velocity.y < 0)
+//        {
+//            rb.gravityScale = fallMultyplier;
+//        } else if (rb.velocity.y > 0 && !jumpPressed)
+//        {
+//            rb.gravityScale = lowJumpMultiplier;
+//        }
+//        else
+//        {
+//            rb.gravityScale = normalGravity;
+//        }        
     }
 
     private void OnTriggerEnter2D(Collider2D other)

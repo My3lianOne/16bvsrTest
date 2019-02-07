@@ -39,22 +39,7 @@ public class ItemsManager : MonoBehaviour
 
     void Start()
     {                
-        poolOfAids = new List<GameObject>();
-        
-        for (int i = 0; i < amountOfAids; i++)
-        {
-            GameObject obj = Instantiate(aids.gameObject);
-            
-            obj.SetActive(false);
-            poolOfAids.Add(obj);                         
-        }
-        
-        for (int i = 0; i < amountOfLives; i++)
-        {
-            GameObject obj = Instantiate(lives.gameObject);          
-            obj.SetActive(false);
-            poolOfLives.Add(obj);                         
-        }  
+
     }
 
     public GameObject GetItem()
@@ -74,6 +59,26 @@ public class ItemsManager : MonoBehaviour
                 return null;                
         }
         
+    }
+
+    public void FillPull()
+    {
+        poolOfAids = new List<GameObject>();
+        
+        for (int i = 0; i < amountOfAids; i++)
+        {
+            GameObject obj = Instantiate(aids.gameObject);
+            
+            obj.SetActive(false);
+            poolOfAids.Add(obj);                         
+        }
+        
+        for (int i = 0; i < amountOfLives; i++)
+        {
+            GameObject obj = Instantiate(lives.gameObject);          
+            obj.SetActive(false);
+            poolOfLives.Add(obj);                         
+        }  
     }
     
 }

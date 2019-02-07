@@ -769,5 +769,9 @@ PrefabInstance:
       propertyPath: m_UiScaleMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1444557825, guid: 3283c2d221f2528488993cf9c8fea9bc, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3283c2d221f2528488993cf9c8fea9bc, type: 3}

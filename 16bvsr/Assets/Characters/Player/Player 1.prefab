@@ -531,9 +531,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseTime: 0.2
-  moveSpd: 30
-  jumpForce: 400
-  wallChecker: {fileID: 4536002828344535091}
+  moveSpd: 116.5
+  jumpForce: 10.29
+  wallChecker: {fileID: 0}
   groundCheckers:
   - {fileID: 4536002828421748001}
   - {fileID: 4536002829256799950}
@@ -543,20 +543,26 @@ MonoBehaviour:
   - {fileID: 4291528118093061257}
   col: {fileID: 4536002829500650164}
   isClimb: 0
-  normalDrag: 5
+  normalDrag: 0
   airDrag: 0
   climbDrag: 20
   isGrounded: 1
   jumpRequest: 0
   jumpPressed: 0
   canMove: 1
-  normalGravity: 1
+  normalGravity: 2.26
   fallMultyplier: 2.43
   climbMultyplier: 3.07
   lowJumpMultiplier: 10
-  groundRemember: 0
+  groundRemember: 0.139
   groundRememberTime: 0.139
+  climbRemember: 0
+  climbRememberTime: 0.138
   m_MovementSmoothing: 0.0137
+  fCutJumpHeight: 0.463
+  horizontalDumpingStopping: 1
+  horizontalDumpingTurning: 0.997
+  horizontalDumpingBasic: 0.559
 --- !u!70 &4536002829500650164
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
