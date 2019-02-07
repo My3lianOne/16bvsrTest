@@ -280,7 +280,7 @@ MonoBehaviour:
   invulnerabilityTime: 3
   haloOfInvulnerability: {fileID: 4536002829030208465}
   whoIsEnemy: 1
-  punchForce: 8.44
+  punchForce: 1.05
 --- !u!70 &4536002828507262899
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -555,7 +555,7 @@ MonoBehaviour:
   climbMultyplier: 3.07
   lowJumpMultiplier: 10
   groundRemember: 0.139
-  groundRememberTime: 0.139
+  groundRememberTime: 0.103
   climbRemember: 0
   climbRememberTime: 0.138
   m_MovementSmoothing: 0.0137

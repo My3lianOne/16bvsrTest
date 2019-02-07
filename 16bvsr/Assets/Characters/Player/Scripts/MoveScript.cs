@@ -147,8 +147,14 @@ public class MoveScript : MonoBehaviour
         
         jumpPressed = Input.GetButton("Jump");
 
-        if(Input.GetButtonDown("Jump"))
-            jumpRequest = true;
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (isGrounded || isClimb)
+            {
+                jumpRequest = true;
+            }
+        }
+            
      
         if (isWallNear && isGrounded == false)
         {
